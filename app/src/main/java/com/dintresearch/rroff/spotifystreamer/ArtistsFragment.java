@@ -17,11 +17,11 @@ import java.util.ArrayList;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class SpotifyFragment extends Fragment {
+public class ArtistsFragment extends Fragment {
 
     private ArrayAdapter<String> mArtistAdapter;
 
-    public SpotifyFragment() {
+    public ArtistsFragment() {
     }
 
     @Override
@@ -39,7 +39,7 @@ public class SpotifyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final View rootView = inflater.inflate(R.layout.fragment_spotify, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_artists, container, false);
 
         ArrayList<String> artistStrings = new ArrayList<>();
         artistStrings.add("No data - Click Refresh to Load");
