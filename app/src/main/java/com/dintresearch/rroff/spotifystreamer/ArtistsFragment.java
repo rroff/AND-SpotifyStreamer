@@ -1,5 +1,6 @@
 package com.dintresearch.rroff.spotifystreamer;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -42,7 +44,6 @@ public class ArtistsFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_artists, container, false);
 
         ArrayList<String> artistStrings = new ArrayList<>();
-        artistStrings.add("No data - Click Refresh to Load");
 
         mArtistAdapter = new ArrayAdapter<>(
                 getActivity(),
@@ -52,6 +53,14 @@ public class ArtistsFragment extends Fragment {
 
         final ListView listView = (ListView)rootView.findViewById(R.id.listview_artists);
         listView.setAdapter(mArtistAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent detailIntent = new Intent(getActivity(), TopTracksActivity.class);
+                detailIntent.putExtra(Intent.EXTRA_TEXT, mArtistAdapter.getItem(position));
+                startActivity(detailIntent);
+            }
+        });
 
         return rootView;
     }
