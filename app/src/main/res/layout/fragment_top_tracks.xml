@@ -4,10 +4,8 @@
     android:layout_height="match_parent"
     tools:context=".TopTracksActivityFragment">
 
-    <TextView
-        android:id="@+id/artist_text"
-        android:text="@string/nothing_yet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <ListView
+        style="@style/ArtistListStyle"
+        android:id="@+id/listview_top_tracks" />
 
 </FrameLayout>

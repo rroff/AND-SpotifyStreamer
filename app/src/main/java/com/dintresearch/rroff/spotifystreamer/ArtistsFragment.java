@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
  * A placeholder fragment containing a simple view.
  */
 public class ArtistsFragment extends Fragment {
+
+    private final String LOG_NAME = ArtistsFragment.class.getName();
 
     private EditText mArtistSearchTxt;
 
@@ -89,6 +92,7 @@ public class ArtistsFragment extends Fragment {
                 Intent detailIntent = new Intent(getActivity(), TopTracksActivity.class);
                 detailIntent.putExtra(Intent.EXTRA_TEXT, mArtistAdapter.getItem(position).getId());
                 detailIntent.putExtra(Intent.EXTRA_TITLE, mArtistAdapter.getItem(position).getName());
+                Log.d(LOG_NAME, "Starting TopTracksActivity");
                 startActivity(detailIntent);
             }
         });

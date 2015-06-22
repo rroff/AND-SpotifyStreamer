@@ -1,24 +1,26 @@
 package com.dintresearch.rroff.spotifystreamer;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 
 
 public class TopTracksActivity extends ActionBarActivity {
 
+    private final String LOG_NAME = TopTracksActivity.class.getName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(LOG_NAME, "+onCreate()");
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_top_tracks);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.top_tracks_container, new TopTracksActivityFragment())
+                    .add(R.id.top_tracks_container, new TopTracksFragment())
                     .commit();
         }
     }

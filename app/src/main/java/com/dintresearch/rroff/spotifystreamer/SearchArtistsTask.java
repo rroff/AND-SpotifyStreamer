@@ -24,7 +24,7 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
     /**
      * Class name for logging.
      */
-    private final String LOG_TAG = SearchArtistsTask.class.getSimpleName();
+    private final static String LOG_TAG = SearchArtistsTask.class.getSimpleName();
 
     /**
      * Adapter for ingesting artist data.
