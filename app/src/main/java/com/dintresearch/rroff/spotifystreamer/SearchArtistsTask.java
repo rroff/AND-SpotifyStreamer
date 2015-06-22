@@ -55,7 +55,7 @@ public class SearchArtistsTask extends AsyncTask<String, Void, String[]> {
      */
     protected String[] doInBackground(String... params) {
 
-        if (params.length == 0) {
+        if ((params.length == 0) || (params[0].length() == 0)) {
             return null;
         }
 
@@ -74,7 +74,7 @@ public class SearchArtistsTask extends AsyncTask<String, Void, String[]> {
         try {
             // Construct the URL for the Spotify Search query
             // Ref: https://developer.spotify.com/web-api/search-item/
-            final String FORECAST_BASE_URL = "https://api.spotify.com/v1/search?q=coldplay&type=artist";
+            final String FORECAST_BASE_URL = "https://api.spotify.com/v1/search";
             final String QUERY_PARAM = "q";
             final String SEARCH_TYPE_PARAM = "type";
             final String MAX_RESULTS_PARAM = "limit";

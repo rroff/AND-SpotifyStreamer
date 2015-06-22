@@ -1,17 +1,23 @@
 package com.dintresearch.rroff.spotifystreamer;
 
+import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -20,6 +26,8 @@ import java.util.ArrayList;
  * A placeholder fragment containing a simple view.
  */
 public class ArtistsFragment extends Fragment {
+
+    private EditText mArtistSearchTxt;
 
     private ArrayAdapter<String> mArtistAdapter;
 
@@ -43,8 +51,28 @@ public class ArtistsFragment extends Fragment {
 
         final View rootView = inflater.inflate(R.layout.fragment_artists, container, false);
 
-        ArrayList<String> artistStrings = new ArrayList<>();
+        // Establish listener for artist search
+        mArtistSearchTxt = (EditText)rootView.findViewById(R.id.artist_search);
+        mArtistSearchTxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 
+                    // Close the soft keyboard
+                    InputMethodManager imm = (InputMethodManager)v.getContext()
+                                                .getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+                    searchForArtists();
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+
+        // Setup ListView for artist search results
+        ArrayList<String> artistStrings = new ArrayList<>();
         mArtistAdapter = new ArrayAdapter<>(
                 getActivity(),
                 R.layout.list_item_artists,
@@ -74,11 +102,15 @@ public class ArtistsFragment extends Fragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            new SearchArtistsTask(mArtistAdapter).execute("Coldplay");
-
+            searchForArtists();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void searchForArtists() {
+        String artistSearchStr = mArtistSearchTxt.getText().toString();
+        new SearchArtistsTask(mArtistAdapter).execute(artistSearchStr);
     }
 }
