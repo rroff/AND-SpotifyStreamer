@@ -15,7 +15,10 @@ import android.view.ViewGroup;
  */
 public class TopTracksActivityFragment extends Fragment {
 
-    private String mArtistStr;
+    private String mArtistIdStr;
+
+    private String mArtistNameStr;
+
 
     public TopTracksActivityFragment() {
     }
@@ -27,8 +30,11 @@ public class TopTracksActivityFragment extends Fragment {
 
         // Artist info is passed in via Intent
         Intent intent = getActivity().getIntent();
-        if ((intent != null) && intent.hasExtra(Intent.EXTRA_TEXT)) {
-            mArtistStr = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (  (intent != null)
+           && intent.hasExtra(Intent.EXTRA_TEXT)
+           && intent.hasExtra(Intent.EXTRA_TITLE)) {
+            mArtistNameStr = intent.getStringExtra(Intent.EXTRA_TITLE);
+            mArtistIdStr = intent.getStringExtra(Intent.EXTRA_TEXT);
         }
 
         return rootView;
@@ -38,9 +44,9 @@ public class TopTracksActivityFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        if (mArtistStr != null) {
+        if (mArtistNameStr != null) {
             ActionBar actionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
-            actionBar.setSubtitle(mArtistStr);
+            actionBar.setSubtitle(mArtistNameStr);
         }
     }
 }

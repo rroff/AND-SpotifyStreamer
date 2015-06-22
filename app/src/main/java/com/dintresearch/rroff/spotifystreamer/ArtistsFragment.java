@@ -29,7 +29,7 @@ public class ArtistsFragment extends Fragment {
 
     private EditText mArtistSearchTxt;
 
-    private ArrayAdapter<String> mArtistAdapter;
+    private ArrayAdapter<Artist> mArtistAdapter;
 
     public ArtistsFragment() {
     }
@@ -64,7 +64,9 @@ public class ArtistsFragment extends Fragment {
                                                 .getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
+                    // Execute the search
                     searchForArtists();
+
                     handled = true;
                 }
                 return handled;
@@ -72,12 +74,12 @@ public class ArtistsFragment extends Fragment {
         });
 
         // Setup ListView for artist search results
-        ArrayList<String> artistStrings = new ArrayList<>();
+        ArrayList<Artist> artists = new ArrayList<>();
         mArtistAdapter = new ArrayAdapter<>(
                 getActivity(),
                 R.layout.list_item_artists,
                 R.id.list_item_artists_textview,
-                artistStrings);
+                artists);
 
         final ListView listView = (ListView)rootView.findViewById(R.id.listview_artists);
         listView.setAdapter(mArtistAdapter);
@@ -85,7 +87,8 @@ public class ArtistsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent detailIntent = new Intent(getActivity(), TopTracksActivity.class);
-                detailIntent.putExtra(Intent.EXTRA_TEXT, mArtistAdapter.getItem(position));
+                detailIntent.putExtra(Intent.EXTRA_TEXT, mArtistAdapter.getItem(position).getId());
+                detailIntent.putExtra(Intent.EXTRA_TITLE, mArtistAdapter.getItem(position).getName());
                 startActivity(detailIntent);
             }
         });

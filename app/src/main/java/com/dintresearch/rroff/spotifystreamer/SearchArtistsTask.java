@@ -19,7 +19,7 @@ import java.net.URL;
 /**
  * Created by rroff on 6/17/2015.
  */
-public class SearchArtistsTask extends AsyncTask<String, Void, String[]> {
+public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
 
     /**
      * Class name for logging.
@@ -29,7 +29,7 @@ public class SearchArtistsTask extends AsyncTask<String, Void, String[]> {
     /**
      * Adapter for ingesting artist data.
      */
-    private ArrayAdapter<String> mArtistAdapter;
+    private ArrayAdapter<Artist> mArtistAdapter;
 
     /**
      * Default constructor.  Marked private to prevent its use.
@@ -43,7 +43,7 @@ public class SearchArtistsTask extends AsyncTask<String, Void, String[]> {
      *
      * @param artistAdapter Adapter for loading search results into the main thread
      */
-    public SearchArtistsTask(ArrayAdapter<String> artistAdapter) {
+    public SearchArtistsTask(ArrayAdapter<Artist> artistAdapter) {
         super();
         mArtistAdapter = artistAdapter;
     }
@@ -53,7 +53,7 @@ public class SearchArtistsTask extends AsyncTask<String, Void, String[]> {
      * @param params
      * @return
      */
-    protected String[] doInBackground(String... params) {
+    protected Artist[] doInBackground(String... params) {
 
         if ((params.length == 0) || (params[0].length() == 0)) {
             return null;
@@ -65,7 +65,7 @@ public class SearchArtistsTask extends AsyncTask<String, Void, String[]> {
         BufferedReader reader = null;
 
         String artistJsonStr = null;
-        String artistStrings[];
+        Artist artists[];
 
         String searchType = "artist";
         int maxResults = 50;
@@ -131,13 +131,13 @@ public class SearchArtistsTask extends AsyncTask<String, Void, String[]> {
 
         // Extract JSON data into return array
         try {
-            artistStrings = getArtistDataFromJson(artistJsonStr);
+            artists = getArtistDataFromJson(artistJsonStr);
         } catch (JSONException e) {
             Log.e(LOG_TAG, "JSON Error ", e);
             return null;
         }
 
-        return artistStrings;
+        return artists;
     }
 
     /**
@@ -145,7 +145,7 @@ public class SearchArtistsTask extends AsyncTask<String, Void, String[]> {
      * @param result
      */
     @Override
-    protected void onPostExecute(String[] result) {
+    protected void onPostExecute(Artist[] result) {
         if (result != null) {
             mArtistAdapter.clear();
             mArtistAdapter.addAll(result);
@@ -161,25 +161,31 @@ public class SearchArtistsTask extends AsyncTask<String, Void, String[]> {
      *
      * @throws JSONException
      */
-    private String[] getArtistDataFromJson(String artistJsonStr)
+    private Artist[] getArtistDataFromJson(String artistJsonStr)
             throws JSONException {
 
         // JSON objects that need to be extracted
         final String SEARCH_ARTISTS = "artists";
         final String SEARCH_ITEMS   = "items";
         final String SEARCH_NAME    = "name";
+        final String SEARCH_ID      = "id";
 
         JSONObject searchJson = new JSONObject(artistJsonStr);
         JSONObject artistsJson = searchJson.getJSONObject(SEARCH_ARTISTS);
         JSONArray itemsArray = artistsJson.getJSONArray(SEARCH_ITEMS);
 
-        String[] artistStrings = new String[itemsArray.length()];
+        Artist[] artists = new Artist[itemsArray.length()];
 
         for (int ii=0; ii < itemsArray.length(); ++ii) {
             JSONObject artistJSON = itemsArray.getJSONObject(ii);
-            artistStrings[ii] = artistJSON.getString(SEARCH_NAME);
+            String name = artistJSON.getString(SEARCH_NAME);
+            String id   = artistJSON.getString(SEARCH_ID);
+            // TODO: Extract image url
+            String imageUrl = "";
+
+            artists[ii] = new Artist(name, id, imageUrl);
         }
 
-        return artistStrings;
+        return artists;
     }
 }
