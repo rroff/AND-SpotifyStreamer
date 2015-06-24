@@ -5,14 +5,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-import java.util.ArrayList;
 
 
 /**
@@ -26,7 +22,7 @@ public class TopTracksFragment extends Fragment {
 
     private String mArtistNameStr;
 
-    private ArrayAdapter<TopTrack> mTopTracksAdapter;
+    private TopTrackAdapter mTopTracksAdapter;
 
     public TopTracksFragment() {
     }
@@ -34,7 +30,6 @@ public class TopTracksFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(LOG_NAME, "+onCreateView()");
         View rootView = inflater.inflate(R.layout.fragment_top_tracks, container, false);
 
         // Artist info is passed in via Intent
@@ -47,12 +42,7 @@ public class TopTracksFragment extends Fragment {
         }
 
         // Setup ListView for track results
-        mTopTracksAdapter = new ArrayAdapter<TopTrack>(
-                getActivity(),
-                R.layout.list_item_tracks,
-                R.id.list_item_tracks_textview,
-                new ArrayList<TopTrack>());
-
+        mTopTracksAdapter = new TopTrackAdapter(getActivity());
         final ListView listView = (ListView)rootView.findViewById(R.id.listview_top_tracks);
         listView.setAdapter(mTopTracksAdapter);
 
@@ -61,7 +51,6 @@ public class TopTracksFragment extends Fragment {
 
     @Override
     public void onStart() {
-        Log.d(LOG_NAME, "+onStart()");
         super.onStart();
         setSubtitle();
         updateTopTracks();

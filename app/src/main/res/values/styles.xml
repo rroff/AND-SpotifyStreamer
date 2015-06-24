@@ -7,17 +7,25 @@
 
     <style name="BaseTextStyle" parent="@android:style/TextAppearance.Small">
         <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">10dp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:layout_gravity">left</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
     <style name="SearchTextStyle" parent="BaseTextStyle">
-        <item name="android:textSize">20dp</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
-    <style name="ArtistListStyle" parent="BaseTextStyle">
+    <style name="ArtistTextStyle" parent="BaseTextStyle">
+    </style>
+
+    <style name="TrackTextStyle" parent="BaseTextStyle">
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="AlbumTextStyle" parent="BaseTextStyle">
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

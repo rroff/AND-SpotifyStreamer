@@ -3,7 +3,6 @@ package com.dintresearch.rroff.spotifystreamer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,7 +28,7 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
     /**
      * Adapter for ingesting artist data.
      */
-    private ArrayAdapter<TopTrack> mTopTracksAdapter;
+    private TopTrackAdapter mTopTracksAdapter;
 
     private final static String BASE_ARTISTS_URL = "https://api.spotify.com/v1/artists";
 
@@ -44,6 +43,7 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
      * Default constructor.  Marked private to prevent its use.
      * Parameterized constructor required.
      */
+    @SuppressWarnings("unused")
     private TopTracksTask() { }
 
     /**
@@ -51,7 +51,7 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
      *
      * @param topTracksAdapter Adapter for loading track results into the main thread
      */
-    public TopTracksTask(ArrayAdapter<TopTrack> topTracksAdapter) {
+    public TopTracksTask(TopTrackAdapter topTracksAdapter) {
         super();
         mTopTracksAdapter = topTracksAdapter;
     }
@@ -149,6 +149,8 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
         final String JSON_LABEL_TRACKS = "tracks";
         final String TRACK_LABEL_NAME  = "name";
         final String TRACK_LABEL_ID    = "id";
+        final String TRACK_LABEL_ALBUM = "album";
+        final String ALBUM_LABEL_NAME  = "name";
 
         JSONObject topTracksJson = new JSONObject(topTracksJsonStr);
         JSONArray tracksArray = topTracksJson.getJSONArray(JSON_LABEL_TRACKS);
@@ -159,8 +161,11 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
             JSONObject trackJson = tracksArray.getJSONObject(ii);
             String name = trackJson.getString(TRACK_LABEL_NAME);
             String id   = trackJson.getString(TRACK_LABEL_ID);
-            // TODO: Extract album name & image url
-            String albumName = "";
+
+            JSONObject albumJson = trackJson.getJSONObject(TRACK_LABEL_ALBUM);
+            String albumName = albumJson.getString(ALBUM_LABEL_NAME);
+
+            // TODO: Extract image url
             String imageUrl = "";
 
             topTracks[ii] = new TopTrack(name, id, albumName, imageUrl);

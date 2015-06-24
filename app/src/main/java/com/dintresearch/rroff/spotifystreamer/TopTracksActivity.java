@@ -2,7 +2,6 @@ package com.dintresearch.rroff.spotifystreamer;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -13,7 +12,6 @@ public class TopTracksActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(LOG_NAME, "+onCreate()");
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_top_tracks);

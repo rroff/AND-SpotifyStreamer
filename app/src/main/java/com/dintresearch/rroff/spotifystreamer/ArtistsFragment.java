@@ -92,7 +92,6 @@ public class ArtistsFragment extends Fragment {
                 Intent detailIntent = new Intent(getActivity(), TopTracksActivity.class);
                 detailIntent.putExtra(Intent.EXTRA_TEXT, mArtistAdapter.getItem(position).getId());
                 detailIntent.putExtra(Intent.EXTRA_TITLE, mArtistAdapter.getItem(position).getName());
-                Log.d(LOG_NAME, "Starting TopTracksActivity");
                 startActivity(detailIntent);
             }
         });

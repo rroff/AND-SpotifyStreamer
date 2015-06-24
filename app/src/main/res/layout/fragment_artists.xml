@@ -15,7 +15,7 @@
         android:imeOptions="actionSearch" />
 
     <ListView
-        style="@style/ArtistListStyle"
+        style="@style/ArtistTextStyle"
         android:id="@+id/listview_artists" />
 
 </LinearLayout>

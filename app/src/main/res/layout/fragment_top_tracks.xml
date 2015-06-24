@@ -5,7 +5,7 @@
     tools:context=".TopTracksActivityFragment">
 
     <ListView
-        style="@style/ArtistListStyle"
+        style="@style/ArtistTextStyle"
         android:id="@+id/listview_top_tracks" />
 
 </FrameLayout>
