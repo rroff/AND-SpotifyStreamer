@@ -12,8 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 /**
  * Adapter class for managing Artist data within the UI.
@@ -54,8 +57,25 @@ public class ArtistAdapter extends ArrayAdapter<Artist> {
 
         // Load data from array into view fields
         if (position < getCount()) {
-            TextView trackNameTV = (TextView)v.findViewById(R.id.list_item_artists_textview);
-            trackNameTV.setText(getItem(position).getName());
+            TextView trackNameTv = (TextView)v.findViewById(R.id.list_item_artists_textview);
+            trackNameTv.setText(getItem(position).getName());
+
+            String imageUrl = getItem(position).getImageUrl();
+            ImageView artistIv = (ImageView)v.findViewById(R.id.list_item_artists_image);
+            if ((imageUrl != null) && (imageUrl.length() > 0)) {
+                Picasso.with(mContext)
+                        .load(imageUrl)
+                        .resize(200,200)
+                        .centerCrop()
+                        .into(artistIv);
+            } else {
+                // Image not found
+                Picasso.with(mContext)
+                        .load(R.drawable.no_image_available)
+                        .resize(200,200)
+                        .centerCrop()
+                        .into(artistIv);
+            }
         }
 
         return v;
