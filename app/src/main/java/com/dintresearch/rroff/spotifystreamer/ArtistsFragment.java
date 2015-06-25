@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,12 +14,9 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 
 
 /**
@@ -32,7 +28,7 @@ public class ArtistsFragment extends Fragment {
 
     private EditText mArtistSearchTxt;
 
-    private ArrayAdapter<Artist> mArtistAdapter;
+    private ArtistAdapter mArtistAdapter;
 
     public ArtistsFragment() {
     }
@@ -77,13 +73,7 @@ public class ArtistsFragment extends Fragment {
         });
 
         // Setup ListView for artist search results
-        ArrayList<Artist> artists = new ArrayList<>();
-        mArtistAdapter = new ArrayAdapter<>(
-                getActivity(),
-                R.layout.list_item_artists,
-                R.id.list_item_artists_textview,
-                artists);
-
+        mArtistAdapter = new ArtistAdapter(getActivity());
         final ListView listView = (ListView)rootView.findViewById(R.id.listview_artists);
         listView.setAdapter(mArtistAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

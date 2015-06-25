@@ -136,9 +136,15 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
 
     @Override
     protected void onPostExecute(TopTrack[] topTracks) {
-        if (topTracks != null) {
-            mTopTracksAdapter.clear();
+        mTopTracksAdapter.clear();
+
+        if ((topTracks == null) || (topTracks.length == 0)) {
+            mTopTracksAdapter.showToast(R.string.msg_no_tracks_found);
+        } else {
             mTopTracksAdapter.addAll(topTracks);
+            if (topTracks.length < 10) {
+                mTopTracksAdapter.showToast(R.string.msg_less_than_ten_tracks_found);
+            }
         }
     }
 

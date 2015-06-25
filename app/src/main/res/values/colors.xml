@@ -3,5 +3,5 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
 
-    <color name="appBackground">#E2EAF0</color>
+    <color name="appBackground">@color/white</color>
 </resources>

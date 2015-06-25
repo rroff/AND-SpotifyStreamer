@@ -3,7 +3,6 @@ package com.dintresearch.rroff.spotifystreamer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,7 +28,7 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
     /**
      * Adapter for ingesting artist data.
      */
-    private ArrayAdapter<Artist> mArtistAdapter;
+    private ArtistAdapter mArtistAdapter;
 
     /**
      * Default constructor.  Marked private to prevent its use.
@@ -43,7 +42,7 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
      *
      * @param artistAdapter Adapter for loading search results into the main thread
      */
-    public SearchArtistsTask(ArrayAdapter<Artist> artistAdapter) {
+    public SearchArtistsTask(ArtistAdapter artistAdapter) {
         super();
         mArtistAdapter = artistAdapter;
     }
@@ -142,13 +141,16 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
 
     /**
      *
-     * @param result
+     * @param artists
      */
     @Override
-    protected void onPostExecute(Artist[] result) {
-        if (result != null) {
-            mArtistAdapter.clear();
-            mArtistAdapter.addAll(result);
+    protected void onPostExecute(Artist[] artists) {
+        mArtistAdapter.clear();
+
+        if ((artists == null) || (artists.length == 0))  {
+            mArtistAdapter.showToast(R.string.msg_no_artists_found);
+        } else {
+            mArtistAdapter.addAll(artists);
         }
     }
 
