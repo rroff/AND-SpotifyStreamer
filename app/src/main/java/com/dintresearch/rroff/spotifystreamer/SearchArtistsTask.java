@@ -167,10 +167,12 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
             throws JSONException {
 
         // JSON objects that need to be extracted
-        final String SEARCH_ARTISTS = "artists";
-        final String SEARCH_ITEMS   = "items";
-        final String SEARCH_NAME    = "name";
-        final String SEARCH_ID      = "id";
+        final String SEARCH_ARTISTS   = "artists";
+        final String SEARCH_ITEMS     = "items";
+        final String SEARCH_NAME      = "name";
+        final String SEARCH_ID        = "id";
+        final String SEARCH_IMAGES    = "images";
+        final String SEARCH_IMAGE_URL = "url";
 
         JSONObject searchJson = new JSONObject(artistJsonStr);
         JSONObject artistsJson = searchJson.getJSONObject(SEARCH_ARTISTS);
@@ -182,8 +184,13 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
             JSONObject artistJSON = itemsArray.getJSONObject(ii);
             String name = artistJSON.getString(SEARCH_NAME);
             String id   = artistJSON.getString(SEARCH_ID);
-            // TODO: Extract image url
+
+            // Use first image, if any exist
+            JSONArray images = artistJSON.getJSONArray(SEARCH_IMAGES);
             String imageUrl = "";
+            if (images.length() > 0) {
+                imageUrl =  images.getJSONObject(0).getString(SEARCH_IMAGE_URL);
+            }
 
             artists[ii] = new Artist(name, id, imageUrl);
         }

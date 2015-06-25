@@ -152,11 +152,13 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
             throws JSONException {
 
         // JSON objects that need to be extracted
-        final String JSON_LABEL_TRACKS = "tracks";
-        final String TRACK_LABEL_NAME  = "name";
-        final String TRACK_LABEL_ID    = "id";
-        final String TRACK_LABEL_ALBUM = "album";
-        final String ALBUM_LABEL_NAME  = "name";
+        final String JSON_LABEL_TRACKS  = "tracks";
+        final String TRACK_LABEL_NAME   = "name";
+        final String TRACK_LABEL_ID     = "id";
+        final String TRACK_LABEL_ALBUM  = "album";
+        final String ALBUM_LABEL_NAME   = "name";
+        final String ALBUM_LABEL_IMAGES = "images";
+        final String IMAGE_LABEL_URL    = "url";
 
         JSONObject topTracksJson = new JSONObject(topTracksJsonStr);
         JSONArray tracksArray = topTracksJson.getJSONArray(JSON_LABEL_TRACKS);
@@ -171,8 +173,12 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
             JSONObject albumJson = trackJson.getJSONObject(TRACK_LABEL_ALBUM);
             String albumName = albumJson.getString(ALBUM_LABEL_NAME);
 
-            // TODO: Extract image url
+            // Use first image, if any exist
+            JSONArray images = albumJson.getJSONArray(ALBUM_LABEL_IMAGES);
             String imageUrl = "";
+            if (images.length() > 0) {
+                imageUrl =  images.getJSONObject(0).getString(IMAGE_LABEL_URL);
+            }
 
             topTracks[ii] = new TopTrack(name, id, albumName, imageUrl);
         }

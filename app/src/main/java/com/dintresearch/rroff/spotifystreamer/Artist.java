@@ -1,50 +1,71 @@
+/*
+ * Copyright(c) 2015 Ron Roff
+ * All Rights Reserved.
+ *
+ * Author: Ron Roff (rroff@roff.us)
+ * Creation Date: 6/22/2015
+ */
 package com.dintresearch.rroff.spotifystreamer;
 
 /**
- * Created by rroff on 6/22/2015.
+ * Container class for Artist data.
  */
 public class Artist {
 
-    private String mName;
+    /**
+     * Artist name.
+     */
+    private String mNameStr;
 
-    private String mId;
+    /**
+     * Artist ID
+     */
+    private String mIdStr;
 
-    private String mImageUrl;
+    /**
+     * Artist image URL
+     */
+    private String mImageUrlStr;
 
-    public Artist() { }
-
+    /**
+     * Constructor.
+     *
+     * @param name Artist name
+     * @param id Artist ID
+     * @param imageUrl Artist image URL
+     */
     public Artist(String name, String id, String imageUrl) {
-        mName = name;
-        mId = id;
-        mImageUrl = imageUrl;
+        mNameStr     = name;
+        mIdStr       = id;
+        mImageUrlStr = imageUrl;
     }
 
     public String getId() {
-        return mId;
+        return mIdStr;
     }
 
     public String getImageUrl() {
-        return mImageUrl;
+        return mImageUrlStr;
     }
 
     public String getName() {
-        return mName;
+        return mNameStr;
     }
 
     public void setId(String id) {
-        mId = id;
+        mIdStr = id;
     }
 
     public void setImageUrl(String imageUrl) {
-        mImageUrl = imageUrl;
+        mImageUrlStr = imageUrl;
     }
 
     public void setName(String name) {
-        mName = name;
+        mNameStr = name;
     }
 
     @Override
     public String toString() {
-        return mName;
+        return mNameStr;
     }
 }
