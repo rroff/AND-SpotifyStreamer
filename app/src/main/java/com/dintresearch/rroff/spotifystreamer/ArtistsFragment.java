@@ -1,3 +1,10 @@
+/*
+ * Copyright(c) 2015 Ron Roff
+ * All Rights Reserved.
+ *
+ * Author: Ron Roff (rroff@roff.us)
+ * Creation Date: 6/12/2015
+ */
 package com.dintresearch.rroff.spotifystreamer;
 
 import android.content.Context;
@@ -17,7 +24,6 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-
 
 /**
  * A placeholder fragment containing a simple view.

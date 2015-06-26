@@ -1,3 +1,10 @@
+/*
+ * Copyright(c) 2015 Ron Roff
+ * All Rights Reserved.
+ *
+ * Author: Ron Roff (rroff@roff.us)
+ * Creation Date: 6/21/2015
+ */
 package com.dintresearch.rroff.spotifystreamer;
 
 import android.os.Bundle;
@@ -5,11 +12,17 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
+/**
+ * Activity for Top Tracks.
+ */
 public class TopTracksActivity extends ActionBarActivity {
 
-    private final String LOG_NAME = TopTracksActivity.class.getName();
-
+    /**
+     * Called when the activity is created.
+     *
+     * @param savedInstanceState If non-null, this activity is being re-constructed from this
+     *                           previous saved state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

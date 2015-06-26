@@ -1,3 +1,10 @@
+/*
+ * Copyright(c) 2015 Ron Roff
+ * All Rights Reserved.
+ *
+ * Author: Ron Roff (rroff@roff.us)
+ * Creation Date: 6/22/2015
+ */
 package com.dintresearch.rroff.spotifystreamer;
 
 import android.net.Uri;
@@ -16,35 +23,24 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by rroff on 6/22/2015.
+ * Task which executes Top Tracks query from Spotify.
  */
 public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
 
     /**
-     * Class name for logging.
+     * Class name for logging
      */
     private final static String LOG_TAG = TopTracksTask.class.getSimpleName();
 
     /**
-     * Adapter for ingesting artist data.
+     * Adapter for ingesting artist data
      */
     private TopTrackAdapter mTopTracksAdapter;
 
-    private final static String BASE_ARTISTS_URL = "https://api.spotify.com/v1/artists";
-
-    private final static String TOP_TRACKS_ENDPOINT = "top-tracks";
-
     /**
-     * Query parameter name for country code.
+     * JSON string returned from Top Tracks query
      */
-    private final static String COUNTRY_PARAM = "country";
-
-    /**
-     * Default constructor.  Marked private to prevent its use.
-     * Parameterized constructor required.
-     */
-    @SuppressWarnings("unused")
-    private TopTracksTask() { }
+    private String mTopTracksJsonStr;
 
     /**
      * Parameterized constructor.
@@ -56,6 +52,13 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
         mTopTracksAdapter = topTracksAdapter;
     }
 
+    /**
+     * Task which runs when the execute() method is performed.
+     *
+     * @param params Array of Strings.  params[0] is the artist ID.
+     *
+     * @return Array of TopTrack data, after retrieval from Spotify
+     */
     @Override
     protected TopTrack[] doInBackground(String... params) {
 
@@ -67,11 +70,14 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection    = null;
             BufferedReader    reader           = null;
-            String            topTracksJsonStr = null;
-
-            String countryCode = "US";
 
             try {
+                final String BASE_ARTISTS_URL    = "https://api.spotify.com/v1/artists";
+                final String TOP_TRACKS_ENDPOINT = "top-tracks";
+                final String COUNTRY_PARAM       = "country";
+
+                String countryCode = "US";
+
                 // Construct the URL for the Spotify Artist Top Tracks query
                 // Ref: https://developer.spotify.com/web-api/get-artists-top-tracks/
                 Uri builtUri = Uri.parse(BASE_ARTISTS_URL).buildUpon()
@@ -80,6 +86,7 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
                         .appendQueryParameter(COUNTRY_PARAM, countryCode)
                         .build();
                 URL url = new URL(builtUri.toString());
+                Log.d(LOG_TAG, builtUri.toString());
 
                 // Send request to Spotify
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -102,7 +109,7 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
                 }
 
                 if (buffer.length() > 0) {
-                    topTracksJsonStr = buffer.toString();
+                    mTopTracksJsonStr = buffer.toString();
                 }
 
             } catch (IOException e) {
@@ -124,7 +131,7 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
 
             // Extract JSON data into return array
             try {
-                topTracks = getTopTracksDataFromJson(topTracksJsonStr);
+                topTracks = getTopTracksDataFromJson(mTopTracksJsonStr);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "JSON Error ", e);
                 return null;
@@ -134,6 +141,11 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
         return topTracks;
     }
 
+    /**
+     * Runs on completion of async task.
+     *
+     * @param topTracks Array of Top Track data produced by async task
+     */
     @Override
     protected void onPostExecute(TopTrack[] topTracks) {
         mTopTracksAdapter.clear();
@@ -148,7 +160,20 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
         }
     }
 
-    private TopTrack[] getTopTracksDataFromJson(String topTracksJsonStr)
+    public String getTopTracksJsonStr() {
+        return mTopTracksJsonStr;
+    }
+
+    /**
+     * Constructs TopTrack array from JSON data.
+     *
+     * @param topTracksJsonStr JSON track data from Spotify
+     *
+     * @return Array of TopTrack data
+     *
+     * @throws JSONException
+     */
+    public static TopTrack[] getTopTracksDataFromJson(String topTracksJsonStr)
             throws JSONException {
 
         // JSON objects that need to be extracted

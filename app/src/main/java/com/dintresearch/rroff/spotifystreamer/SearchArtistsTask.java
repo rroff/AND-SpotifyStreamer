@@ -1,3 +1,10 @@
+/*
+ * Copyright(c) 2015 Ron Roff
+ * All Rights Reserved.
+ *
+ * Author: Ron Roff (rroff@roff.us)
+ * Creation Date: 6/17/2015
+ */
 package com.dintresearch.rroff.spotifystreamer;
 
 import android.net.Uri;
@@ -15,9 +22,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Created by rroff on 6/17/2015.
- */
 public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
 
     /**
@@ -87,6 +91,7 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
                     .build();
 
             URL url = new URL(builtUri.toString());
+            Log.d(LOG_TAG, builtUri.toString());
 
             // Send request to Spotify
             urlConnection = (HttpURLConnection) url.openConnection();
