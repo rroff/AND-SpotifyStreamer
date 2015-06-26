@@ -52,18 +52,6 @@ public class Artist {
         return mNameStr;
     }
 
-    public void setId(String id) {
-        mIdStr = id;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        mImageUrlStr = imageUrl;
-    }
-
-    public void setName(String name) {
-        mNameStr = name;
-    }
-
     @Override
     public String toString() {
         return mNameStr;

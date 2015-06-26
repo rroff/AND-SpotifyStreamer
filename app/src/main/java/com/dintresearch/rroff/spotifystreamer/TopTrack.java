@@ -63,22 +63,6 @@ public class TopTrack {
         return mAlbumNameStr;
     }
 
-    public void setTrackId(String id) {
-        mTrackIdStr = id;
-    }
-
-    public void setAlbumImageUrl(String imageUrl) {
-        mAlbumImageUrlStr = imageUrl;
-    }
-
-    public void setTrackName(String name) {
-        mTrackNameStr = name;
-    }
-
-    public void setAlbumNameStr(String name) {
-        mAlbumNameStr = name;
-    }
-
     @Override
     public String toString() {
         return mTrackNameStr;

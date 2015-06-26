@@ -30,7 +30,7 @@ import android.widget.TextView;
  */
 public class ArtistsFragment extends Fragment {
 
-    private final String LOG_NAME = ArtistsFragment.class.getName();
+    private static final String LOG_TAG = ArtistsFragment.class.getName();
 
     private EditText mArtistSearchTxt;
 

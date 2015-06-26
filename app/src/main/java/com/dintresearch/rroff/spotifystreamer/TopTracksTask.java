@@ -95,17 +95,18 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
 
                 // Store results from search request
                 InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
                 if (inputStream == null) {
                     // Nothing to do.
                     return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
 
+                StringBuilder buffer = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) {
                     // Format in the event the string is needed for debugging
-                    buffer.append(line + "\n");
+                    buffer.append(line);
+                    buffer.append("\n");
                 }
 
                 if (buffer.length() > 0) {

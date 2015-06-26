@@ -52,7 +52,7 @@ public class ArtistAdapter extends ArrayAdapter<Artist> {
         if (v == null) {
             LayoutInflater vi = (LayoutInflater)getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.list_item_artists, null);
+            v = vi.inflate(R.layout.list_item_artists, parent, false);
         }
 
         // Load data from array into view fields

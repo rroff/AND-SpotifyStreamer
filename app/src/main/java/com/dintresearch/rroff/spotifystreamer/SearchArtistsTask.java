@@ -27,19 +27,12 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
     /**
      * Class name for logging.
      */
-    private final static String LOG_TAG = SearchArtistsTask.class.getSimpleName();
+    private static final String LOG_TAG = SearchArtistsTask.class.getSimpleName();
 
     /**
      * Adapter for ingesting artist data.
      */
     private ArtistAdapter mArtistAdapter;
-
-    /**
-     * Default constructor.  Marked private to prevent its use.
-     * Parameterized constructor required.
-     */
-    private SearchArtistsTask() {
-    }
 
     /**
      * Parameterized constructor.
@@ -52,9 +45,11 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
     }
 
     /**
+     * Task which runs when the execute() method is performed.
      *
-     * @param params
-     * @return
+     * @param params Array of Strings.  params[0] is the artist name.
+     *
+     * @return Array of Artist data, after retrieval from Spotify
      */
     protected Artist[] doInBackground(String... params) {
 
@@ -100,17 +95,18 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
 
             // Store results from search request
             InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
                 // Nothing to do.
                 return null;
             }
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
+            StringBuilder buffer = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
                 // Format in the event the string is needed for debugging
-                buffer.append(line + "\n");
+                buffer.append(line);
+                buffer.append("\n");
             }
 
             if (buffer.length() > 0) {
@@ -145,8 +141,9 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
     }
 
     /**
+     * Runs on completion of async task.
      *
-     * @param artists
+     * @param artists Array of Artist data produced by async task
      */
     @Override
     protected void onPostExecute(Artist[] artists) {
@@ -168,7 +165,7 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
      *
      * @throws JSONException
      */
-    private Artist[] getArtistDataFromJson(String artistJsonStr)
+    public static Artist[] getArtistDataFromJson(String artistJsonStr)
             throws JSONException {
 
         // JSON objects that need to be extracted
