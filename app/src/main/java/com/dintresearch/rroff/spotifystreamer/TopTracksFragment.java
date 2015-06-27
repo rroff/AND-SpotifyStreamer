@@ -12,13 +12,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import org.json.JSONException;
+import java.util.ArrayList;
 
 /**
  * Fragment for the Top Tracks activity.
@@ -31,11 +30,6 @@ public class TopTracksFragment extends Fragment {
     private static final String LOG_TAG = TopTracksFragment.class.getName();
 
     /**
-     * Saved instance label for JSON string
-     */
-    private static final String JSON_STRING_LABEL = "mTopTracksJsonStr";
-
-    /**
      * Artist Info
      */
     private Artist mArtist;
@@ -46,14 +40,9 @@ public class TopTracksFragment extends Fragment {
     private TopTrackAdapter mTopTracksAdapter;
 
     /**
-     * Top Tracks JSON string, restored from saved instance
+     * Flag to indicate if instance data was restored
      */
-    private String mTopTracksJsonStr;
-
-    /**
-     * Executed task for retrieving Top Tracks data from Spotify
-     */
-    private TopTracksTask mTopTracksTask;
+    private boolean mInstanceDataRestored = false;
 
     /**
      * Constructor
@@ -77,6 +66,8 @@ public class TopTracksFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_top_tracks, container, false);
 
+        mTopTracksAdapter = new TopTrackAdapter(getActivity());
+
         // Artist info is passed in via Intent
         Intent intent = getActivity().getIntent();
         if (  (intent != null)
@@ -87,11 +78,13 @@ public class TopTracksFragment extends Fragment {
 
         // Restore saved data
         if (savedInstanceState != null) {
-            mTopTracksJsonStr = savedInstanceState.getString(JSON_STRING_LABEL);
+            ArrayList<TopTrack> topTracks
+                    = savedInstanceState.getParcelableArrayList(TopTrackAdapter.class.getName());
+            mTopTracksAdapter.addAll(topTracks);
+            mInstanceDataRestored = true;
         }
 
         // Setup ListView for track results
-        mTopTracksAdapter = new TopTrackAdapter(getActivity());
         final ListView listView = (ListView) rootView.findViewById(R.id.listview_top_tracks);
         listView.setAdapter(mTopTracksAdapter);
 
@@ -105,7 +98,10 @@ public class TopTracksFragment extends Fragment {
     public void onStart() {
         super.onStart();
         setSubtitleToArtistName();
-        updateTopTracks();
+
+        if (!mInstanceDataRestored) {
+            updateTopTracks();
+        }
     }
 
     /**
@@ -117,13 +113,9 @@ public class TopTracksFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        // JSON string can source from the string member variable (if restored from a previous
-        // state), or from the executed task
-        if (mTopTracksJsonStr != null) {
-            outState.putString(JSON_STRING_LABEL, mTopTracksJsonStr);
-        } else if (mTopTracksTask != null) {
-            outState.putString(JSON_STRING_LABEL, mTopTracksTask.getTopTracksJsonStr());
-        }
+        // Preserve top tracks data
+        outState.putParcelableArrayList(TopTrackAdapter.class.getName(),
+                mTopTracksAdapter.getArtistArrayList());
     }
 
     /**
@@ -140,19 +132,6 @@ public class TopTracksFragment extends Fragment {
      * Updates Top Tracks data in UI.
      */
     private void updateTopTracks() {
-
-        if (mTopTracksJsonStr != null) {
-            // If JSON string exists, no need to reexecute query
-            try {
-                TopTrack[] topTracks = TopTracksTask.getTopTracksDataFromJson(mTopTracksJsonStr);
-                mTopTracksAdapter.clear();
-                mTopTracksAdapter.addAll(topTracks);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, "JSON Error ", e);
-            }
-        } else {
-            mTopTracksTask = new TopTracksTask(mTopTracksAdapter);
-            mTopTracksTask.execute(mArtist.getId());
-        }
+        new TopTracksTask(mTopTracksAdapter).execute(mArtist.getId());
     }
 }

@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 /**
  * Adapter class for managing TopTrack data within the UI.
  */
@@ -85,6 +87,19 @@ public class TopTrackAdapter extends ArrayAdapter<TopTrack> {
         }
 
         return v;
+    }
+
+    /**
+     * Returns the top track data within the adapter.
+     *
+     * @return ArrayList of top track data
+     */
+    public ArrayList<TopTrack> getArtistArrayList() {
+        ArrayList<TopTrack> topTracks = new ArrayList<TopTrack>();
+        for (int ii=0; ii<getCount(); ++ii) {
+            topTracks.add(getItem(ii));
+        }
+        return topTracks;
     }
 
     /**

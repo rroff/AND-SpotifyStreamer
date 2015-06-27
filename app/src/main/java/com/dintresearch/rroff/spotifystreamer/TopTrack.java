@@ -7,10 +7,13 @@
  */
 package com.dintresearch.rroff.spotifystreamer;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Container class for Top 10 Track data.
  */
-public class TopTrack {
+public class TopTrack implements Parcelable {
 
     /**
      * Track name.
@@ -47,6 +50,18 @@ public class TopTrack {
         mAlbumImageUrlStr = albumImageUrl;
     }
 
+    /**
+     * Constructor.
+     *
+     * @param in Parcelized object data
+     */
+    public TopTrack(Parcel in) {
+        mTrackNameStr     = in.readString();
+        mTrackIdStr       = in.readString();
+        mAlbumNameStr     = in.readString();
+        mAlbumImageUrlStr = in.readString();
+    }
+
     public String getTrackId() {
         return mTrackIdStr;
     }
@@ -67,4 +82,31 @@ public class TopTrack {
     public String toString() {
         return mTrackNameStr;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mTrackNameStr);
+        dest.writeString(mTrackIdStr);
+        dest.writeString(mAlbumNameStr);
+        dest.writeString(mAlbumImageUrlStr);
+    }
+
+    public static final Parcelable.Creator<TopTrack> CREATOR
+            = new Parcelable.Creator<TopTrack>() {
+
+        @Override
+        public TopTrack createFromParcel(Parcel source) {
+            return new TopTrack(source);
+        }
+
+        @Override
+        public TopTrack[] newArray(int size) {
+            return new TopTrack[size];
+        }
+    };
 }

@@ -34,11 +34,6 @@ public class ArtistsFragment extends Fragment {
 
     private static final String LOG_TAG = ArtistsFragment.class.getName();
 
-    /**
-     * Saved instance label for JSON string
-     */
-    private static final String JSON_STRING_LABEL = "mArtistJsonStr";
-
     private EditText mArtistSearchTxt;
 
     private ArtistAdapter mArtistAdapter;
