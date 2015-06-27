@@ -53,88 +53,88 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
      */
     protected Artist[] doInBackground(String... params) {
 
-        if ((params.length == 0) || (params[0].length() == 0)) {
-            return null;
-        }
+        Artist artists[] = null;
 
-        // These two need to be declared outside the try/catch
-        // so that they can be closed in the finally block.
-        HttpURLConnection urlConnection = null;
-        BufferedReader reader = null;
+        if ((params.length > 0) && (params[0].length() > 0)) {
 
-        Artist artists[];
-        String artistJsonStr = null;
+            // These two need to be declared outside the try/catch
+            // so that they can be closed in the finally block.
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
 
-        String searchType = "artist";
-        int maxResults = 50;
-        int resultsOffset = 0;
+            String artistJsonStr = null;
 
-        try {
-            // Construct the URL for the Spotify Search query
-            // Ref: https://developer.spotify.com/web-api/search-item/
-            final String FORECAST_BASE_URL = "https://api.spotify.com/v1/search";
-            final String QUERY_PARAM = "q";
-            final String SEARCH_TYPE_PARAM = "type";
-            final String MAX_RESULTS_PARAM = "limit";
-            final String RESULTS_OFFSET_PARAM = "offset";
+            try {
+                // Construct the URL for the Spotify Search query
+                // Ref: https://developer.spotify.com/web-api/search-item/
+                final String FORECAST_BASE_URL = "https://api.spotify.com/v1/search";
+                final String QUERY_PARAM = "q";
+                final String SEARCH_TYPE_PARAM = "type";
+                final String MAX_RESULTS_PARAM = "limit";
+                final String RESULTS_OFFSET_PARAM = "offset";
 
-            Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
-                    .appendQueryParameter(QUERY_PARAM, params[0])
-                    .appendQueryParameter(SEARCH_TYPE_PARAM, searchType)
-                    .appendQueryParameter(MAX_RESULTS_PARAM, Integer.toString(maxResults))
-                    .appendQueryParameter(RESULTS_OFFSET_PARAM, Integer.toString(resultsOffset))
-                    .build();
+                String searchType = "artist";
+                int maxResults    = 50;
+                int resultsOffset = 0;
 
-            URL url = new URL(builtUri.toString());
-            Log.d(LOG_TAG, builtUri.toString());
+                Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
+                        .appendQueryParameter(QUERY_PARAM, params[0])
+                        .appendQueryParameter(SEARCH_TYPE_PARAM, searchType)
+                        .appendQueryParameter(MAX_RESULTS_PARAM, Integer.toString(maxResults))
+                        .appendQueryParameter(RESULTS_OFFSET_PARAM, Integer.toString(resultsOffset))
+                        .build();
 
-            // Send request to Spotify
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
+                URL url = new URL(builtUri.toString());
+                Log.d(LOG_TAG, builtUri.toString());
 
-            // Store results from search request
-            InputStream inputStream = urlConnection.getInputStream();
-            if (inputStream == null) {
-                // Nothing to do.
+                // Send request to Spotify
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                // Store results from search request
+                InputStream inputStream = urlConnection.getInputStream();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                StringBuilder buffer = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Format in the event the string is needed for debugging
+                    buffer.append(line);
+                    buffer.append("\n");
+                }
+
+                if (buffer.length() > 0) {
+                    artistJsonStr = buffer.toString();
+                }
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                // Skip processing
                 return null;
-            }
-            reader = new BufferedReader(new InputStreamReader(inputStream));
-
-            StringBuilder buffer = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // Format in the event the string is needed for debugging
-                buffer.append(line);
-                buffer.append("\n");
-            }
-
-            if (buffer.length() > 0) {
-                artistJsonStr = buffer.toString();
-            }
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Error ", e);
-            // Skip processing
-            return null;
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
                 }
             }
-        }
 
-        // Extract JSON data into return array
-        try {
-            artists = getArtistDataFromJson(artistJsonStr);
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "JSON Error ", e);
-            return null;
+            // Extract JSON data into return array
+            try {
+                artists = getArtistDataFromJson(artistJsonStr);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, "JSON Error ", e);
+                return null;
+            }
         }
 
         return artists;

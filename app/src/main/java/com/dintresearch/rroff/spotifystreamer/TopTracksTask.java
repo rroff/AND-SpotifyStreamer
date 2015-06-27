@@ -38,9 +38,9 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
     private TopTrackAdapter mTopTracksAdapter;
 
     /**
-     * JSON string returned from Top Tracks query
+     * Country code used for top track retrieval
      */
-    private String mTopTracksJsonStr;
+    private String mCountryCode;
 
     /**
      * Parameterized constructor.
@@ -55,7 +55,9 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
     /**
      * Task which runs when the execute() method is performed.
      *
-     * @param params Array of Strings.  params[0] is the artist ID.
+     * @param params Array of Strings.
+     *               params[0] is the artist ID.
+     *               params[1] is the country code.
      *
      * @return Array of TopTrack data, after retrieval from Spotify
      */
@@ -64,26 +66,31 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
 
         TopTrack topTracks[]      = null;
 
-        if ((params.length > 0) && (params[0].length() > 0)) {
+        if (  (params.length == 2)
+           && (params[0].length() > 0)
+           && (params[1].length() > 0)) {
+
+            final String artistId = params[0];
+            mCountryCode = params[1];
 
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection    = null;
             BufferedReader    reader           = null;
 
+            String topTracksJsonStr = null;
+
             try {
                 final String BASE_ARTISTS_URL    = "https://api.spotify.com/v1/artists";
                 final String TOP_TRACKS_ENDPOINT = "top-tracks";
                 final String COUNTRY_PARAM       = "country";
 
-                String countryCode = "US";
-
                 // Construct the URL for the Spotify Artist Top Tracks query
                 // Ref: https://developer.spotify.com/web-api/get-artists-top-tracks/
                 Uri builtUri = Uri.parse(BASE_ARTISTS_URL).buildUpon()
-                        .appendPath(params[0])
+                        .appendPath(artistId)
                         .appendPath(TOP_TRACKS_ENDPOINT)
-                        .appendQueryParameter(COUNTRY_PARAM, countryCode)
+                        .appendQueryParameter(COUNTRY_PARAM, mCountryCode)
                         .build();
                 URL url = new URL(builtUri.toString());
                 Log.d(LOG_TAG, builtUri.toString());
@@ -110,7 +117,7 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
                 }
 
                 if (buffer.length() > 0) {
-                    mTopTracksJsonStr = buffer.toString();
+                    topTracksJsonStr = buffer.toString();
                 }
 
             } catch (IOException e) {
@@ -132,7 +139,7 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
 
             // Extract JSON data into return array
             try {
-                topTracks = getTopTracksDataFromJson(mTopTracksJsonStr);
+                topTracks = getTopTracksDataFromJson(topTracksJsonStr);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "JSON Error ", e);
                 return null;
@@ -149,6 +156,7 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
      */
     @Override
     protected void onPostExecute(TopTrack[] topTracks) {
+        mTopTracksAdapter.setCountryCode(mCountryCode);
         mTopTracksAdapter.clear();
 
         if ((topTracks == null) || (topTracks.length == 0)) {
@@ -159,10 +167,6 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
                 mTopTracksAdapter.showToast(R.string.msg_less_than_ten_tracks_found);
             }
         }
-    }
-
-    public String getTopTracksJsonStr() {
-        return mTopTracksJsonStr;
     }
 
     /**
