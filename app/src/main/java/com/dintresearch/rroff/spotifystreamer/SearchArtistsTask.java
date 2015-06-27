@@ -34,6 +34,8 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
      */
     private ArtistAdapter mArtistAdapter;
 
+    private String mArtistJsonStr;
+
     /**
      * Parameterized constructor.
      *
@@ -62,8 +64,8 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
-        String artistJsonStr = null;
         Artist artists[];
+        mArtistJsonStr = null;
 
         String searchType = "artist";
         int maxResults = 50;
@@ -110,7 +112,7 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
             }
 
             if (buffer.length() > 0) {
-                artistJsonStr = buffer.toString();
+                mArtistJsonStr = buffer.toString();
             }
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
@@ -131,7 +133,7 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
 
         // Extract JSON data into return array
         try {
-            artists = getArtistDataFromJson(artistJsonStr);
+            artists = getArtistDataFromJson(mArtistJsonStr);
         } catch (JSONException e) {
             Log.e(LOG_TAG, "JSON Error ", e);
             return null;
@@ -154,6 +156,10 @@ public class SearchArtistsTask extends AsyncTask<String, Void, Artist[]> {
         } else {
             mArtistAdapter.addAll(artists);
         }
+    }
+
+    public String getArtistJsonStr() {
+        return mArtistJsonStr;
     }
 
     /**

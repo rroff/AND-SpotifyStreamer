@@ -28,12 +28,12 @@ public class TopTracksFragment extends Fragment {
     /**
      * Name of class, used for logging.
      */
-    private final String LOG_TAG = TopTracksFragment.class.getName();
+    private static final String LOG_TAG = TopTracksFragment.class.getName();
 
     /**
      * Saved instance label for JSON string
      */
-    private final String JSON_STRING_LABEL = "mTopTracksJsonStr";
+    private static final String JSON_STRING_LABEL = "mTopTracksJsonStr";
 
     /**
      * Artist ID

@@ -23,6 +23,9 @@ import com.squareup.picasso.Picasso;
  */
 public class TopTrackAdapter extends ArrayAdapter<TopTrack> {
 
+    private static final int IMAGE_HEIGHT = 200;
+    private static final int IMAGE_WIDTH = 200;
+
     Context mContext;
 
     /**
@@ -68,14 +71,14 @@ public class TopTrackAdapter extends ArrayAdapter<TopTrack> {
             if ((imageUrl != null) && (imageUrl.length() > 0)) {
                 Picasso.with(mContext)
                         .load(imageUrl)
-                        .resize(200,200)
+                        .resize(IMAGE_WIDTH, IMAGE_HEIGHT)
                         .centerCrop()
                         .into(albumIv);
             } else {
                 // Image not found
                 Picasso.with(mContext)
                         .load(R.drawable.no_image_available)
-                        .resize(200,200)
+                        .resize(IMAGE_WIDTH, IMAGE_HEIGHT)
                         .centerCrop()
                         .into(albumIv);
             }
