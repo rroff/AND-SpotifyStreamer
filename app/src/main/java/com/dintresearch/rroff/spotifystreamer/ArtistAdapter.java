@@ -18,11 +18,16 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 /**
  * Adapter class for managing Artist data within the UI.
  */
 public class ArtistAdapter extends ArrayAdapter<Artist> {
 
+    /**
+     * Current context
+     */
     Context mContext;
 
     /**
@@ -79,6 +84,19 @@ public class ArtistAdapter extends ArrayAdapter<Artist> {
         }
 
         return v;
+    }
+
+    /**
+     * Returns the artist data within the adapter.
+     *
+     * @return ArrayList of artist data
+     */
+    public ArrayList<Artist> getArtistArrayList() {
+        ArrayList<Artist> artists = new ArrayList<Artist>();
+        for (int ii=0; ii<getCount(); ++ii) {
+            artists.add(getItem(ii));
+        }
+        return artists;
     }
 
     /**

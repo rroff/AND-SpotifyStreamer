@@ -17,6 +17,8 @@ import android.view.MenuItem;
  */
 public class TopTracksActivity extends ActionBarActivity {
 
+    public static final String INSTANCE_BUNDLE = "TopTracksActivityInstanceBundle";
+
     /**
      * Called when the activity is created.
      *

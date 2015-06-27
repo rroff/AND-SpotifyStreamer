@@ -36,14 +36,9 @@ public class TopTracksFragment extends Fragment {
     private static final String JSON_STRING_LABEL = "mTopTracksJsonStr";
 
     /**
-     * Artist ID
+     * Artist Info
      */
-    private String mArtistIdStr;
-
-    /**
-     * Artist name
-     */
-    private String mArtistNameStr;
+    private Artist mArtist;
 
     /**
      * Adapter for Top Tracks ListView
@@ -85,10 +80,9 @@ public class TopTracksFragment extends Fragment {
         // Artist info is passed in via Intent
         Intent intent = getActivity().getIntent();
         if (  (intent != null)
-           && intent.hasExtra(Intent.EXTRA_TEXT)
-           && intent.hasExtra(Intent.EXTRA_TITLE)) {
-            mArtistNameStr = intent.getStringExtra(Intent.EXTRA_TITLE);
-            mArtistIdStr = intent.getStringExtra(Intent.EXTRA_TEXT);
+           && intent.hasExtra(TopTracksActivity.INSTANCE_BUNDLE)) {
+            Bundle bundle = intent.getBundleExtra(TopTracksActivity.INSTANCE_BUNDLE);
+            mArtist = bundle.getParcelable(Artist.class.getName());
         }
 
         // Restore saved data
@@ -137,8 +131,8 @@ public class TopTracksFragment extends Fragment {
      */
     private void setSubtitleToArtistName() {
         ActionBar actionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
-        if ((actionBar != null) && (mArtistNameStr != null)) {
-            actionBar.setSubtitle(mArtistNameStr);
+        if ((actionBar != null) && (mArtist != null)) {
+            actionBar.setSubtitle(mArtist.getName());
         }
     }
 
@@ -158,7 +152,7 @@ public class TopTracksFragment extends Fragment {
             }
         } else {
             mTopTracksTask = new TopTracksTask(mTopTracksAdapter);
-            mTopTracksTask.execute(mArtistIdStr);
+            mTopTracksTask.execute(mArtist.getId());
         }
     }
 }

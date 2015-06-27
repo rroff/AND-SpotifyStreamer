@@ -7,10 +7,13 @@
  */
 package com.dintresearch.rroff.spotifystreamer;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Container class for Artist data.
  */
-public class Artist {
+public class Artist implements Parcelable {
 
     /**
      * Artist name.
@@ -40,6 +43,17 @@ public class Artist {
         mImageUrlStr = imageUrl;
     }
 
+    /**
+     * Constructor.
+     *
+     * @param in Parcelized object data
+     */
+    public Artist(Parcel in) {
+        mNameStr     = in.readString();
+        mIdStr       = in.readString();
+        mImageUrlStr = in.readString();
+    }
+
     public String getId() {
         return mIdStr;
     }
@@ -56,4 +70,30 @@ public class Artist {
     public String toString() {
         return mNameStr;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mNameStr);
+        dest.writeString(mIdStr);
+        dest.writeString(mImageUrlStr);
+    }
+
+    public static final Parcelable.Creator<Artist> CREATOR
+            = new Parcelable.Creator<Artist>() {
+
+        @Override
+        public Artist createFromParcel(Parcel source) {
+            return new Artist(source);
+        }
+
+        @Override
+        public Artist[] newArray(int size) {
+            return new Artist[size];
+        }
+    };
 }

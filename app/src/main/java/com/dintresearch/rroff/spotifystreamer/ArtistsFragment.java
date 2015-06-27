@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,7 +25,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.json.JSONException;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -43,16 +42,6 @@ public class ArtistsFragment extends Fragment {
     private EditText mArtistSearchTxt;
 
     private ArtistAdapter mArtistAdapter;
-
-    /**
-     * Artist search JSON string, restored from saved instance
-     */
-    private String mArtistJsonStr;
-
-    /**
-     * Executed task for retrieving Artist data from Spotify
-     */
-    private SearchArtistsTask mArtistTask;
 
     /**
      * Constructor
@@ -101,9 +90,13 @@ public class ArtistsFragment extends Fragment {
 
         final View rootView = inflater.inflate(R.layout.fragment_artists, container, false);
 
+        mArtistAdapter = new ArtistAdapter(getActivity());
+
         // Restore saved data
         if (savedInstanceState != null) {
-            mArtistJsonStr = savedInstanceState.getString(JSON_STRING_LABEL);
+            ArrayList<Artist> artists = savedInstanceState
+                                        .getParcelableArrayList(ArtistAdapter.class.getName());
+            mArtistAdapter.addAll(artists);
         }
 
         // Establish listener for artist search
@@ -126,15 +119,16 @@ public class ArtistsFragment extends Fragment {
         });
 
         // Setup ListView for artist search results
-        mArtistAdapter = new ArtistAdapter(getActivity());
         final ListView listView = (ListView)rootView.findViewById(R.id.listview_artists);
         listView.setAdapter(mArtistAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Start Top Tracks Activity using selected artist
                 Intent detailIntent = new Intent(getActivity(), TopTracksActivity.class);
-                detailIntent.putExtra(Intent.EXTRA_TEXT, mArtistAdapter.getItem(position).getId());
-                detailIntent.putExtra(Intent.EXTRA_TITLE, mArtistAdapter.getItem(position).getName());
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(Artist.class.getName(), mArtistAdapter.getItem(position));
+                detailIntent.putExtra(TopTracksActivity.INSTANCE_BUNDLE, bundle);
                 startActivity(detailIntent);
             }
         });
@@ -148,20 +142,6 @@ public class ArtistsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        // If JSON data exists from saved instance, display data in UI
-        if (mArtistJsonStr != null) {
-            try {
-                Artist[] artists = SearchArtistsTask.getArtistDataFromJson(mArtistJsonStr);
-                mArtistAdapter.clear();
-                mArtistAdapter.addAll(artists);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, "JSON Error ", e);
-            }
-
-            // Keep keyboard closed for screen rotations
-            closeSoftKeyboard(mArtistSearchTxt);
-        }
     }
 
     /**
@@ -173,13 +153,9 @@ public class ArtistsFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        // JSON string can source from the string member variable (if restored from a previous
-        // state), or from the executed task
-        if (mArtistJsonStr != null) {
-            outState.putString(JSON_STRING_LABEL, mArtistJsonStr);
-        } else if (mArtistTask != null) {
-            outState.putString(JSON_STRING_LABEL, mArtistTask.getArtistJsonStr());
-        }
+        // Preserve artist search data
+        outState.putParcelableArrayList(ArtistAdapter.class.getName(),
+                mArtistAdapter.getArtistArrayList());
     }
 
     /**
@@ -221,7 +197,6 @@ public class ArtistsFragment extends Fragment {
      */
     private void searchForArtists() {
         String artistSearchStr = mArtistSearchTxt.getText().toString();
-        mArtistTask = new SearchArtistsTask(mArtistAdapter);
-        mArtistTask.execute(artistSearchStr);
+        new SearchArtistsTask(mArtistAdapter).execute(artistSearchStr);
     }
 }
