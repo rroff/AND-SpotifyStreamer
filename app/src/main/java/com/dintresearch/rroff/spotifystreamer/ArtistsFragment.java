@@ -13,9 +13,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -42,30 +39,6 @@ public class ArtistsFragment extends Fragment {
      * Constructor
      */
     public ArtistsFragment() {
-    }
-
-    /**
-     * Called when the fragment is created.
-     *
-     * @param savedInstanceState If non-null, this activity is being re-constructed from this
-     *                           previous saved state
-     */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    /**
-     * Creates menu options.
-     *
-     * @param menu Current menu context
-     *
-     * @param inflater MenuInflater object that can be used to inflate any menus in the fragment
-     */
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.spotifyfragment, menu);
     }
 
     /**
@@ -151,29 +124,6 @@ public class ArtistsFragment extends Fragment {
         // Preserve artist search data
         outState.putParcelableArrayList(ArtistAdapter.class.getName(),
                 mArtistAdapter.getArtistArrayList());
-    }
-
-    /**
-     * Options menu processor.
-     *
-     * @param item Menu item selected
-     *
-     * @return True if menu option was processed
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_refresh) {
-            searchForArtists();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /**

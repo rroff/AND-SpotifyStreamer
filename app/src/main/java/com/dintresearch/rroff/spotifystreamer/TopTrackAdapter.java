@@ -8,6 +8,7 @@
 package com.dintresearch.rroff.spotifystreamer;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,9 @@ public class TopTrackAdapter extends ArrayAdapter<TopTrack> {
     private static final int IMAGE_HEIGHT = 200;
     private static final int IMAGE_WIDTH = 200;
 
-    Context mContext;
+    private Context mContext;
+
+    private String mCountryCode;
 
     /**
      * Constructor for adapter.
@@ -38,6 +41,9 @@ public class TopTrackAdapter extends ArrayAdapter<TopTrack> {
     public TopTrackAdapter(Context context) {
         super(context, R.layout.list_item_tracks);
         mContext = context;
+        mCountryCode = PreferenceManager.getDefaultSharedPreferences(context)
+                        .getString(context.getString(R.string.pref_country_key),
+                                context.getString(R.string.pref_country_default));
     }
 
     /**
@@ -89,13 +95,21 @@ public class TopTrackAdapter extends ArrayAdapter<TopTrack> {
         return v;
     }
 
+    public String getCountryCode() {
+        return mCountryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.mCountryCode = countryCode;
+    }
+
     /**
      * Returns the top track data within the adapter.
      *
      * @return ArrayList of top track data
      */
     public ArrayList<TopTrack> getArtistArrayList() {
-        ArrayList<TopTrack> topTracks = new ArrayList<TopTrack>();
+        ArrayList<TopTrack> topTracks = new ArrayList<>();
         for (int ii=0; ii<getCount(); ++ii) {
             topTracks.add(getItem(ii));
         }

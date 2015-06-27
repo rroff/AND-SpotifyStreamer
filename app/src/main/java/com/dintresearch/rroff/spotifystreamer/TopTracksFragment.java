@@ -9,6 +9,7 @@ package com.dintresearch.rroff.spotifystreamer;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -78,8 +79,12 @@ public class TopTracksFragment extends Fragment {
 
         // Restore saved data
         if (savedInstanceState != null) {
+            String countryCode
+                    = savedInstanceState.getString(getString(R.string.pref_country_key));
+            mTopTracksAdapter.setCountryCode(countryCode);
+
             ArrayList<TopTrack> topTracks
-                    = savedInstanceState.getParcelableArrayList(TopTrackAdapter.class.getName());
+                        = savedInstanceState.getParcelableArrayList(TopTrackAdapter.class.getName());
             mTopTracksAdapter.addAll(topTracks);
             mInstanceDataRestored = true;
         }
@@ -99,8 +104,15 @@ public class TopTracksFragment extends Fragment {
         super.onStart();
         setSubtitleToArtistName();
 
-        if (!mInstanceDataRestored) {
-            updateTopTracks();
+        String countryCode = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                                .getString(getString(R.string.pref_country_key),
+                                    getString(R.string.pref_country_default));
+
+        // Update list if not restored by instance or if country code has changed
+        if (  (!mInstanceDataRestored)
+           || (  (countryCode != null)
+              && (!countryCode.equals(mTopTracksAdapter.getCountryCode())) ) ) {
+            updateTopTracks(countryCode);
         }
     }
 
@@ -114,6 +126,8 @@ public class TopTracksFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         // Preserve top tracks data
+        outState.putString(getString(R.string.pref_country_key),
+                           mTopTracksAdapter.getCountryCode());
         outState.putParcelableArrayList(TopTrackAdapter.class.getName(),
                 mTopTracksAdapter.getArtistArrayList());
     }
@@ -131,7 +145,8 @@ public class TopTracksFragment extends Fragment {
     /**
      * Updates Top Tracks data in UI.
      */
-    private void updateTopTracks() {
-        new TopTracksTask(mTopTracksAdapter).execute(mArtist.getId());
+    private void updateTopTracks(String countryCode) {
+
+        new TopTracksTask(mTopTracksAdapter).execute(mArtist.getId(), countryCode);
     }
 }
