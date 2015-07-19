@@ -16,6 +16,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -92,6 +93,17 @@ public class TopTracksFragment extends Fragment {
         // Setup ListView for track results
         final ListView listView = (ListView) rootView.findViewById(R.id.listview_top_tracks);
         listView.setAdapter(mTopTracksAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Start Player Activity using selected track
+                Intent detailIntent = new Intent(getActivity(), PlayerActivity.class);
+                Bundle bundle = new Bundle();
+                // TODO: Add bundle contents
+                detailIntent.putExtra(PlayerActivity.INSTANCE_BUNDLE, bundle);
+                startActivity(detailIntent);
+            }
+        });
 
         return rootView;
     }
@@ -146,7 +158,8 @@ public class TopTracksFragment extends Fragment {
      * Updates Top Tracks data in UI.
      */
     private void updateTopTracks(String countryCode) {
-
-        new TopTracksTask(mTopTracksAdapter).execute(mArtist.getId(), countryCode);
+        if (mArtist != null) {
+            new TopTracksTask(mTopTracksAdapter).execute(mArtist.getId(), countryCode);
+        }
     }
 }
