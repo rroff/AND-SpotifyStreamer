@@ -84,9 +84,9 @@ public class TopTracksFragment extends Fragment {
                     = savedInstanceState.getString(getString(R.string.pref_country_key));
             mTopTracksAdapter.setCountryCode(countryCode);
 
-            ArrayList<TopTrack> topTracks
+            ArrayList<Track> tracks
                         = savedInstanceState.getParcelableArrayList(TopTrackAdapter.class.getName());
-            mTopTracksAdapter.addAll(topTracks);
+            mTopTracksAdapter.addAll(tracks);
             mInstanceDataRestored = true;
         }
 
@@ -99,7 +99,7 @@ public class TopTracksFragment extends Fragment {
                 // Start Player Activity using selected track
                 Intent detailIntent = new Intent(getActivity(), PlayerActivity.class);
                 Bundle bundle = new Bundle();
-                // TODO: Add bundle contents
+                bundle.putParcelable(Track.class.getName(), mTopTracksAdapter.getItem(position));
                 detailIntent.putExtra(PlayerActivity.INSTANCE_BUNDLE, bundle);
                 startActivity(detailIntent);
             }

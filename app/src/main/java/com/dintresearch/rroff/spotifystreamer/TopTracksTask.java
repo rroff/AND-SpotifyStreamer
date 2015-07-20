@@ -25,7 +25,7 @@ import java.net.URL;
 /**
  * Task which executes Top Tracks query from Spotify.
  */
-public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
+public class TopTracksTask extends AsyncTask<String, Void, Track[]> {
 
     /**
      * Class name for logging
@@ -62,9 +62,9 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
      * @return Array of TopTrack data, after retrieval from Spotify
      */
     @Override
-    protected TopTrack[] doInBackground(String... params) {
+    protected Track[] doInBackground(String... params) {
 
-        TopTrack topTracks[]      = null;
+        Track tracks[]      = null;
 
         if (  (params.length == 2)
            && (params[0].length() > 0)
@@ -139,69 +139,73 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
 
             // Extract JSON data into return array
             try {
-                topTracks = getTopTracksDataFromJson(topTracksJsonStr);
+                tracks = getTopTracksDataFromJson(topTracksJsonStr);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "JSON Error ", e);
                 return null;
             }
         }
 
-        return topTracks;
+        return tracks;
     }
 
     /**
      * Runs on completion of async task.
      *
-     * @param topTracks Array of Top Track data produced by async task
+     * @param tracks Array of Top Track data produced by async task
      */
     @Override
-    protected void onPostExecute(TopTrack[] topTracks) {
+    protected void onPostExecute(Track[] tracks) {
         mTopTracksAdapter.setCountryCode(mCountryCode);
         mTopTracksAdapter.clear();
 
-        if ((topTracks == null) || (topTracks.length == 0)) {
+        if ((tracks == null) || (tracks.length == 0)) {
             mTopTracksAdapter.showToast(R.string.msg_no_tracks_found);
         } else {
-            mTopTracksAdapter.addAll(topTracks);
-            if (topTracks.length < 10) {
+            mTopTracksAdapter.addAll(tracks);
+            if (tracks.length < 10) {
                 mTopTracksAdapter.showToast(R.string.msg_less_than_ten_tracks_found);
             }
         }
     }
 
     /**
-     * Constructs TopTrack array from JSON data.
+     * Constructs Track array from JSON data.
      *
      * @param topTracksJsonStr JSON track data from Spotify
      *
-     * @return Array of TopTrack data
+     * @return Array of Track data
      *
      * @throws JSONException
      */
-    public static TopTrack[] getTopTracksDataFromJson(String topTracksJsonStr)
+    public static Track[] getTopTracksDataFromJson(String topTracksJsonStr)
             throws JSONException {
 
         // JSON objects that need to be extracted
-        final String JSON_LABEL_TRACKS  = "tracks";
-        final String TRACK_LABEL_NAME   = "name";
-        final String TRACK_LABEL_ID     = "id";
-        final String TRACK_LABEL_ALBUM  = "album";
-        final String ALBUM_LABEL_NAME   = "name";
-        final String ALBUM_LABEL_IMAGES = "images";
-        final String IMAGE_LABEL_URL    = "url";
+        final String JSON_LABEL_TRACKS       = "tracks";
+        final String TRACK_LABEL_NAME        = "name";
+        final String TRACK_LABEL_ID          = "id";
+        final String TRACK_LABEL_PREVIEW_URL = "preview_url";
+        final String TRACK_LABEL_ALBUM       = "album";
+        final String ALBUM_LABEL_NAME        = "name";
+        final String ALBUM_LABEL_IMAGES      = "images";
+        final String IMAGE_LABEL_URL         = "url";
+        final String TRACK_LABEL_ARTISTS     = "artists";
+        final String ARTIST_LABEL_NAME       = "name";
 
         JSONObject topTracksJson = new JSONObject(topTracksJsonStr);
         JSONArray tracksArray = topTracksJson.getJSONArray(JSON_LABEL_TRACKS);
 
-        TopTrack[] topTracks = new TopTrack[tracksArray.length()];
+        Track[] tracks = new Track[tracksArray.length()];
 
         for (int ii=0; ii < tracksArray.length(); ++ii) {
             JSONObject trackJson = tracksArray.getJSONObject(ii);
-            String name = trackJson.getString(TRACK_LABEL_NAME);
-            String id   = trackJson.getString(TRACK_LABEL_ID);
+            String name          = trackJson.getString(TRACK_LABEL_NAME);
+            String id            = trackJson.getString(TRACK_LABEL_ID);
+            String previewUrl    = trackJson.getString(TRACK_LABEL_PREVIEW_URL);
 
             JSONObject albumJson = trackJson.getJSONObject(TRACK_LABEL_ALBUM);
-            String albumName = albumJson.getString(ALBUM_LABEL_NAME);
+            String albumName     = albumJson.getString(ALBUM_LABEL_NAME);
 
             // Use first image, if any exist
             JSONArray images = albumJson.getJSONArray(ALBUM_LABEL_IMAGES);
@@ -210,10 +214,17 @@ public class TopTracksTask extends AsyncTask<String, Void, TopTrack[]> {
                 imageUrl =  images.getJSONObject(0).getString(IMAGE_LABEL_URL);
             }
 
-            topTracks[ii] = new TopTrack(name, id, albumName, imageUrl);
+            JSONArray artistsArray = trackJson.getJSONArray(TRACK_LABEL_ARTISTS);
+            if (artistsArray.length() > 0) {
+                JSONObject artistJson = artistsArray.getJSONObject(0);
+                String artistName = artistJson.getString(ARTIST_LABEL_NAME);
+                tracks[ii] = new Track(name, id, albumName, imageUrl, previewUrl, artistName);
+            } else {
+                tracks[ii] = new Track(name, id, albumName, imageUrl, previewUrl, "");
+            }
         }
 
-        return topTracks;
+        return tracks;
 
     }
 }

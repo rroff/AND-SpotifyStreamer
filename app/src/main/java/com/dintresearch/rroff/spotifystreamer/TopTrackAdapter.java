@@ -24,7 +24,7 @@ import java.util.ArrayList;
 /**
  * Adapter class for managing TopTrack data within the UI.
  */
-public class TopTrackAdapter extends ArrayAdapter<TopTrack> {
+public class TopTrackAdapter extends ArrayAdapter<Track> {
 
     private static final int IMAGE_HEIGHT = 200;
     private static final int IMAGE_WIDTH = 200;
@@ -108,12 +108,12 @@ public class TopTrackAdapter extends ArrayAdapter<TopTrack> {
      *
      * @return ArrayList of top track data
      */
-    public ArrayList<TopTrack> getArtistArrayList() {
-        ArrayList<TopTrack> topTracks = new ArrayList<>();
+    public ArrayList<Track> getArtistArrayList() {
+        ArrayList<Track> tracks = new ArrayList<>();
         for (int ii=0; ii<getCount(); ++ii) {
-            topTracks.add(getItem(ii));
+            tracks.add(getItem(ii));
         }
-        return topTracks;
+        return tracks;
     }
 
     /**

@@ -13,7 +13,7 @@ import android.os.Parcelable;
 /**
  * Container class for Top 10 Track data.
  */
-public class TopTrack implements Parcelable {
+public class Track implements Parcelable {
 
     /**
      * Track name.
@@ -36,6 +36,16 @@ public class TopTrack implements Parcelable {
     private String mAlbumImageUrlStr;
 
     /**
+     * Track preview URL.
+     */
+    private String mPreviewUrlStr;
+
+    /**
+     * Artist name.
+     */
+    private String mArtistNameStr;
+
+    /**
      * Constructor.
      *
      * @param trackName Track name
@@ -43,11 +53,14 @@ public class TopTrack implements Parcelable {
      * @param albumName Album name
      * @param albumImageUrl Album image URL
      */
-    public TopTrack(String trackName, String trackId, String albumName, String albumImageUrl) {
+    public Track(String trackName, String trackId, String albumName, String albumImageUrl,
+                 String trackPreviewUrl, String artistName) {
         mTrackNameStr     = trackName;
         mTrackIdStr       = trackId;
         mAlbumNameStr     = albumName;
         mAlbumImageUrlStr = albumImageUrl;
+        mPreviewUrlStr    = trackPreviewUrl;
+        mArtistNameStr    = artistName;
     }
 
     /**
@@ -55,11 +68,13 @@ public class TopTrack implements Parcelable {
      *
      * @param in Parcelized object data
      */
-    public TopTrack(Parcel in) {
+    public Track(Parcel in) {
         mTrackNameStr     = in.readString();
         mTrackIdStr       = in.readString();
         mAlbumNameStr     = in.readString();
         mAlbumImageUrlStr = in.readString();
+        mPreviewUrlStr    = in.readString();
+        mArtistNameStr    = in.readString();
     }
 
     public String getTrackId() {
@@ -78,6 +93,14 @@ public class TopTrack implements Parcelable {
         return mAlbumNameStr;
     }
 
+    public String getPreviewUrl() {
+        return mPreviewUrlStr;
+    }
+
+    public String getArtistName() {
+        return mArtistNameStr;
+    }
+
     @Override
     public String toString() {
         return mTrackNameStr;
@@ -94,19 +117,21 @@ public class TopTrack implements Parcelable {
         dest.writeString(mTrackIdStr);
         dest.writeString(mAlbumNameStr);
         dest.writeString(mAlbumImageUrlStr);
+        dest.writeString(mPreviewUrlStr);
+        dest.writeString(mArtistNameStr);
     }
 
-    public static final Parcelable.Creator<TopTrack> CREATOR
-            = new Parcelable.Creator<TopTrack>() {
+    public static final Parcelable.Creator<Track> CREATOR
+            = new Parcelable.Creator<Track>() {
 
         @Override
-        public TopTrack createFromParcel(Parcel source) {
-            return new TopTrack(source);
+        public Track createFromParcel(Parcel source) {
+            return new Track(source);
         }
 
         @Override
-        public TopTrack[] newArray(int size) {
-            return new TopTrack[size];
+        public Track[] newArray(int size) {
+            return new Track[size];
         }
     };
 }

@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
     android:background="@color/appBackground"
     tools:context=".PlayerFragment">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <TextView
+        style="@style/PlayerArtistTextStyle"
+        android:layout_marginTop="20dp"
+        android:text="Artist"
+        android:id="@+id/artist_name_textview" />
 
-</FrameLayout>
+    <TextView
+        style="@style/PlayerAlbumTextStyle"
+        android:text="Album"
+        android:id="@+id/album_name_textview" />
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_margin="10dp"
+        android:id="@+id/track_image" />
+
+    <TextView
+
+        style="@style/PlayerTrackTextStyle"
+        android:layout_marginBottom="20dp"
+        android:text="Track"
+        android:id="@+id/track_name_textview" />
+
+</LinearLayout>

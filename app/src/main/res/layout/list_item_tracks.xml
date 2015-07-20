@@ -20,11 +20,11 @@
         android:orientation="vertical">
 
         <TextView
-            style="@style/TrackTextStyle"
+            style="@style/ListItemTrackTextStyle"
             android:id="@+id/list_item_track_name_textview" />
 
         <TextView
-            style="@style/AlbumTextStyle"
+            style="@style/ListItemAlbumTextStyle"
             android:id="@+id/list_item_track_album_textview" />
 
     </LinearLayout>
