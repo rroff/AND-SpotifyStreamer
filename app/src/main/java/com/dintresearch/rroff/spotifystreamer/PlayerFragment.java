@@ -104,6 +104,7 @@ public class PlayerFragment extends Fragment {
         if (mPlayer != null) {
             Uri builtUri = Uri.parse(mTrack.getPreviewUrl());
             try {
+                mPlayer.reset();
                 mPlayer.setDataSource(getActivity(), builtUri);
                 new PlayerTask(mPlayer).execute();
             } catch (IOException e) {
