@@ -12,6 +12,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
 
 
 /**
@@ -54,17 +57,14 @@ public class PlayerFragment extends Fragment {
             mTrack = bundle.getParcelable(Track.class.getName());
         }
 
+        mPlayer = new MediaPlayer();
+
         TextView artistNameTV = (TextView)rootView.findViewById(R.id.artist_name_textview);
         TextView albumNameTV  = (TextView)rootView.findViewById(R.id.album_name_textview);
         TextView trackNameTV  = (TextView)rootView.findViewById(R.id.track_name_textview);
         ImageView albumIv     = (ImageView)rootView.findViewById(R.id.track_image);
 
-
-
         if (mTrack != null) {
-            Uri builtUri = Uri.parse(mTrack.getPreviewUrl());
-            mPlayer = MediaPlayer.create(getActivity(), builtUri);
-
             artistNameTV.setText(mTrack.getArtistName());
             albumNameTV.setText(mTrack.getAlbumName());
             trackNameTV.setText(mTrack.getTrackName());
@@ -102,14 +102,20 @@ public class PlayerFragment extends Fragment {
     public void onStart() {
         super.onStart();
         if (mPlayer != null) {
-            mPlayer.start();
+            Uri builtUri = Uri.parse(mTrack.getPreviewUrl());
+            try {
+                mPlayer.setDataSource(getActivity(), builtUri);
+                new PlayerTask(mPlayer).execute();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error setting data source", e);
+            }
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (mPlayer != null) {
+        if ((mPlayer != null) && (mPlayer.isPlaying())) {
             mPlayer.stop();
         }
     }
