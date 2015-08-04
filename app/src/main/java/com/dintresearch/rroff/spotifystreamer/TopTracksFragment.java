@@ -26,6 +26,8 @@ import java.util.ArrayList;
  */
 public class TopTracksFragment extends Fragment {
 
+    public static final String TOPTRACKS_ARTIST = "TOPTRACKS_ARTIST";
+
     /**
      * Name of class, used for logging.
      */
@@ -70,12 +72,10 @@ public class TopTracksFragment extends Fragment {
 
         mTopTracksAdapter = new TopTrackAdapter(getActivity());
 
-        // Artist info is passed in via Intent
-        Intent intent = getActivity().getIntent();
-        if (  (intent != null)
-           && intent.hasExtra(TopTracksActivity.INSTANCE_BUNDLE)) {
-            Bundle bundle = intent.getBundleExtra(TopTracksActivity.INSTANCE_BUNDLE);
-            mArtist = bundle.getParcelable(Artist.class.getName());
+        // Artist info is passed in via arguments
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mArtist = arguments.getParcelable(TopTracksFragment.TOPTRACKS_ARTIST);
         }
 
         // Restore saved data

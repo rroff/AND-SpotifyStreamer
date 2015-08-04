@@ -7,8 +7,8 @@
  */
 package com.dintresearch.rroff.spotifystreamer;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
@@ -31,9 +31,20 @@ public class ArtistsFragment extends Fragment {
 
     private static final String LOG_TAG = ArtistsFragment.class.getName();
 
+    /**
+     * Artist search string used for Spotify lookup.
+     */
     private EditText mArtistSearchTxt;
 
+    /**
+     * Adapter for managing artist data.
+     */
     private ArtistAdapter mArtistAdapter;
+
+    /**
+     * Position of selected artist.
+     */
+    private int mSelectedPosition;
 
     /**
      * Constructor
@@ -92,12 +103,13 @@ public class ArtistsFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Start Top Tracks Activity using selected artist
-                Intent detailIntent = new Intent(getActivity(), TopTracksActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(Artist.class.getName(), mArtistAdapter.getItem(position));
-                detailIntent.putExtra(TopTracksActivity.INSTANCE_BUNDLE, bundle);
-                startActivity(detailIntent);
+                mSelectedPosition = position;
+
+                // Use activity callback for selected artist
+                Activity activity = getActivity();
+                if (activity instanceof Callback) {
+                    ((Callback)activity).onArtistItemSelected(mArtistAdapter.getItem(position));
+                }
             }
         });
 
@@ -143,5 +155,16 @@ public class ArtistsFragment extends Fragment {
     private void searchForArtists() {
         String artistSearchStr = mArtistSearchTxt.getText().toString();
         new SearchArtistsTask(mArtistAdapter).execute(artistSearchStr);
+    }
+
+    /**
+     * Callback interface for activities to implement.  Allows activity to
+     * be notified of artist selection.
+     */
+    public interface Callback {
+        /**
+         * TopTracksFragment Callback for when an item has been selected.
+         */
+        public void onArtistItemSelected(Artist selectedArtist);
     }
 }

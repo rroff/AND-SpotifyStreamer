@@ -13,7 +13,19 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ArtistsFragment.Callback {
+
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
+
+    /**
+     * Top Tracks fragment tag.
+     */
+    private final static String TRACKSFRAGMENT_TAG = "TRACKSFTAG";
+
+    /**
+     * Indicates if layout has two fragments.
+     */
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,10 +33,17 @@ public class MainActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.artists_container, new ArtistsFragment())
-                    .commit();
+        if (findViewById(R.id.top_tracks_container) != null) {
+            // Screen > sw600dp - show top tracks
+            mTwoPane = true;
+
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.artists_container, new ArtistsFragment())
+                        .commit();
+            }
+        } else {
+            mTwoPane = false;
         }
     }
 
@@ -49,5 +68,28 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onArtistItemSelected(Artist selectedArtist) {
+        if (mTwoPane) {
+            Bundle args = new Bundle();
+            args.putParcelable(TopTracksFragment.TOPTRACKS_ARTIST, selectedArtist);
+
+            TopTracksFragment ttFragment = new TopTracksFragment();
+            ttFragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.top_tracks_container, ttFragment, TRACKSFRAGMENT_TAG)
+                    .commit();
+        } else {
+            // Start Top Tracks Activity using selected artist
+            Intent detailIntent = new Intent(this, TopTracksActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(Artist.class.getName(), selectedArtist);
+            detailIntent.putExtra(TopTracksActivity.INSTANCE_BUNDLE, bundle);
+            startActivity(detailIntent);
+
+        }
     }
 }
