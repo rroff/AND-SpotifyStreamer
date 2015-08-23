@@ -75,6 +75,7 @@ public class MainActivity extends ActionBarActivity implements ArtistsFragment.C
         if (mTwoPane) {
             Bundle args = new Bundle();
             args.putParcelable(TopTracksFragment.TOPTRACKS_ARTIST, selectedArtist);
+            args.putBoolean(TopTracksFragment.TWO_PANE_FLAG, mTwoPane);
 
             TopTracksFragment ttFragment = new TopTracksFragment();
             ttFragment.setArguments(args);

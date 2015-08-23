@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 public class TopTracksFragment extends Fragment {
 
     public static final String TOPTRACKS_ARTIST = "TOPTRACKS_ARTIST";
+
+    public static final String TWO_PANE_FLAG = "TWO_PANE";
 
     /**
      * Name of class, used for logging.
@@ -47,6 +50,8 @@ public class TopTracksFragment extends Fragment {
      * Flag to indicate if instance data was restored
      */
     private boolean mInstanceDataRestored = false;
+
+    private boolean mTwoPane = false;
 
     /**
      * Constructor
@@ -76,6 +81,7 @@ public class TopTracksFragment extends Fragment {
         Bundle arguments = getArguments();
         if (arguments != null) {
             mArtist = arguments.getParcelable(TopTracksFragment.TOPTRACKS_ARTIST);
+            mTwoPane = arguments.getBoolean(TopTracksFragment.TWO_PANE_FLAG);
         }
 
         // Restore saved data
@@ -96,12 +102,21 @@ public class TopTracksFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Start Player Activity using selected track
-                Intent detailIntent = new Intent(getActivity(), PlayerActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(Track.class.getName(), mTopTracksAdapter.getItem(position));
-                detailIntent.putExtra(PlayerActivity.INSTANCE_BUNDLE, bundle);
-                startActivity(detailIntent);
+                Bundle args = new Bundle();
+                args.putParcelable(Track.class.getName(), mTopTracksAdapter.getItem(position));
+
+                if (mTwoPane) {
+                    // Use Dialog for Player
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    PlayerDialog playerDialog = new PlayerDialog();
+                    playerDialog.setArguments(args);
+                    playerDialog.show(fm, "fragment_player");
+                } else {
+                    // Use Activity for Player
+                    Intent detailIntent = new Intent(getActivity(), PlayerActivity.class);
+                    detailIntent.putExtra(PlayerActivity.INSTANCE_BUNDLE, args);
+                    startActivity(detailIntent);
+                }
             }
         });
 
