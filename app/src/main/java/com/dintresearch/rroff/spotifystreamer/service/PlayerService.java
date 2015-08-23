@@ -128,6 +128,16 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
         }
     }
 
+    public boolean isPlaying() {
+        boolean playFlag = false;
+
+        if (mPlayer != null) {
+            playFlag = mPlayer.isPlaying();
+        }
+
+        return playFlag;
+    }
+
     /**
      * Starts playback once audio has been buffered.
      *

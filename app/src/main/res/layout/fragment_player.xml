@@ -45,28 +45,28 @@
         android:orientation="horizontal"
         android:gravity="center">
 
-        <Button
+        <ImageButton
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:text="PREV"
+            android:src="@drawable/audio_start"
             android:id="@+id/prev_track_button" />
 
-        <Button
+        <ImageButton
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:text="PLAY"
+            android:src="@drawable/audio_play"
             android:id="@+id/play_pause_button" />
 
-        <Button
+        <ImageButton
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:text="NEXT"
+            android:src="@drawable/audio_end"
             android:id="@+id/next_track_button" />
 
     </LinearLayout>

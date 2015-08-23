@@ -14,7 +14,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,7 +43,7 @@ public class PlayerHelper {
 
     private int mDuration;
 
-    private Button mPlayPauseButton;
+    private ImageButton mPlayPauseButton;
     private TextView mDurationTV;
 
     /**
@@ -94,7 +94,7 @@ public class PlayerHelper {
         }
 
         mDurationTV = (TextView)rootView.findViewById(R.id.track_duration_textview);
-        mPlayPauseButton = (Button)rootView.findViewById(R.id.play_pause_button);
+        mPlayPauseButton = (ImageButton)rootView.findViewById(R.id.play_pause_button);
         mPlayPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,7 +130,7 @@ public class PlayerHelper {
         if (mServiceBound && (mTrack != null)) {
             mDuration = mBoundService.play(mTrack.getPreviewUrl());
             if (mDuration > 0) {
-                mPlayPauseButton.setText("PAUSE");
+                mPlayPauseButton.setImageResource(R.drawable.audio_pause);
             }
             mDurationTV.setText(Integer.toString(mDuration));
         } else {
@@ -144,7 +144,7 @@ public class PlayerHelper {
     private void pauseTrack() {
         if (mServiceBound) {
             mBoundService.pause();
-            mPlayPauseButton.setText("PLAY");
+            mPlayPauseButton.setImageResource(R.drawable.audio_play);
         } else {
             Log.e(LOG_TAG, "Unable to pause track - service not bound");
         }
@@ -154,10 +154,12 @@ public class PlayerHelper {
      * Handles the button toggle between play & pause.
      */
     private void togglePlayPause() {
-        if (mPlayPauseButton.getText().equals("PLAY")) {
-            playTrack();
-        } else {
-            pauseTrack();
+        if (mServiceBound) {
+            if (!mBoundService.isPlaying()) {
+                playTrack();
+            } else {
+                pauseTrack();
+            }
         }
     }
 
