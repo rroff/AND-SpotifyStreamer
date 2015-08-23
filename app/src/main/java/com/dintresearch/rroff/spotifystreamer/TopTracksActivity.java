@@ -29,12 +29,15 @@ public class TopTracksActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_top_tracks);
 
         if (savedInstanceState == null) {
+            // Create the fragment and pass through the bundle as arguments
+            TopTracksFragment ttFragment = new TopTracksFragment();
+            ttFragment.setArguments(getIntent().getBundleExtra(TopTracksActivity.INSTANCE_BUNDLE));
+
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.top_tracks_container, new TopTracksFragment())
+                    .add(R.id.top_tracks_container, ttFragment)
                     .commit();
         }
     }

@@ -72,11 +72,11 @@ public class MainActivity extends ActionBarActivity implements ArtistsFragment.C
 
     @Override
     public void onArtistItemSelected(Artist selectedArtist) {
-        if (mTwoPane) {
-            Bundle args = new Bundle();
-            args.putParcelable(TopTracksFragment.TOPTRACKS_ARTIST, selectedArtist);
-            args.putBoolean(TopTracksFragment.TWO_PANE_FLAG, mTwoPane);
+        Bundle args = new Bundle();
+        args.putParcelable(TopTracksFragment.TOPTRACKS_ARTIST, selectedArtist);
+        args.putBoolean(TopTracksFragment.TWO_PANE_FLAG, mTwoPane);
 
+        if (mTwoPane) {
             TopTracksFragment ttFragment = new TopTracksFragment();
             ttFragment.setArguments(args);
 
@@ -86,11 +86,8 @@ public class MainActivity extends ActionBarActivity implements ArtistsFragment.C
         } else {
             // Start Top Tracks Activity using selected artist
             Intent detailIntent = new Intent(this, TopTracksActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(Artist.class.getName(), selectedArtist);
-            detailIntent.putExtra(TopTracksActivity.INSTANCE_BUNDLE, bundle);
+            detailIntent.putExtra(TopTracksActivity.INSTANCE_BUNDLE, args);
             startActivity(detailIntent);
-
         }
     }
 }
