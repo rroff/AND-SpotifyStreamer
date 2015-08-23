@@ -2,6 +2,9 @@
 <resources>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="lightGrey">#D0D0D0</color>
 
     <color name="appBackground">@color/white</color>
+    <color name="buttonBackground">@color/lightGrey</color>
+
 </resources>

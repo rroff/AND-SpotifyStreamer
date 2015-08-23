@@ -41,10 +41,7 @@ public class PlayerHelper {
 
     private Track mTrack;
 
-    private int mDuration;
-
     private ImageButton mPlayPauseButton;
-    private TextView mDurationTV;
 
     /**
      * Constructor.  Used to populate UI fields.
@@ -61,11 +58,13 @@ public class PlayerHelper {
         TextView albumNameTV  = (TextView)rootView.findViewById(R.id.album_name_textview);
         TextView trackNameTV  = (TextView)rootView.findViewById(R.id.track_name_textview);
         ImageView albumIv     = (ImageView)rootView.findViewById(R.id.track_image);
+        TextView durationTV   = (TextView)rootView.findViewById(R.id.track_duration_textview);
 
         if (mTrack != null) {
             artistNameTV.setText(mTrack.getArtistName());
             albumNameTV.setText(mTrack.getAlbumName());
             trackNameTV.setText(mTrack.getTrackName());
+            durationTV.setText(mTrack.getTrackDurationStr());
 
             String imageUrl = mTrack.getAlbumImageUrl();
             if ((imageUrl != null) && (imageUrl.length() > 0)) {
@@ -86,6 +85,7 @@ public class PlayerHelper {
             artistNameTV.setText("???");
             albumNameTV.setText("???");
             trackNameTV.setText("???");
+            durationTV.setText("0:00");
             Picasso.with(context)
                     .load(R.drawable.no_image_available)
                     .resize(IMAGE_WIDTH, IMAGE_HEIGHT)
@@ -93,7 +93,6 @@ public class PlayerHelper {
                     .into(albumIv);
         }
 
-        mDurationTV = (TextView)rootView.findViewById(R.id.track_duration_textview);
         mPlayPauseButton = (ImageButton)rootView.findViewById(R.id.play_pause_button);
         mPlayPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,11 +127,8 @@ public class PlayerHelper {
      */
     private void playTrack() {
         if (mServiceBound && (mTrack != null)) {
-            mDuration = mBoundService.play(mTrack.getPreviewUrl());
-            if (mDuration > 0) {
-                mPlayPauseButton.setImageResource(R.drawable.audio_pause);
-            }
-            mDurationTV.setText(Integer.toString(mDuration));
+            mBoundService.play(mTrack.getPreviewUrl());
+            mPlayPauseButton.setImageResource(R.drawable.audio_pause);
         } else {
             Log.e(LOG_TAG, "Unable to play track - service not bound");
         }

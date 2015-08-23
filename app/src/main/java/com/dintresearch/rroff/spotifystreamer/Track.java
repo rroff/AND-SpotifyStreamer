@@ -15,6 +15,9 @@ import android.os.Parcelable;
  */
 public class Track implements Parcelable {
 
+    private static final int MS_PER_SECOND = 1000;
+    private static final int SECONDS_PER_MINUTE = 60;
+
     /**
      * Track name.
      */
@@ -46,6 +49,11 @@ public class Track implements Parcelable {
     private String mArtistNameStr;
 
     /**
+     * Duration, in ms.
+     */
+    private long mDurationMs;
+
+    /**
      * Constructor.
      *
      * @param trackName Track name
@@ -54,13 +62,14 @@ public class Track implements Parcelable {
      * @param albumImageUrl Album image URL
      */
     public Track(String trackName, String trackId, String albumName, String albumImageUrl,
-                 String trackPreviewUrl, String artistName) {
+                 String trackPreviewUrl, String artistName, long durationMs) {
         mTrackNameStr     = trackName;
         mTrackIdStr       = trackId;
         mAlbumNameStr     = albumName;
         mAlbumImageUrlStr = albumImageUrl;
         mPreviewUrlStr    = trackPreviewUrl;
         mArtistNameStr    = artistName;
+        mDurationMs       = durationMs;
     }
 
     /**
@@ -75,6 +84,7 @@ public class Track implements Parcelable {
         mAlbumImageUrlStr = in.readString();
         mPreviewUrlStr    = in.readString();
         mArtistNameStr    = in.readString();
+        mDurationMs       = in.readLong();
     }
 
     public String getTrackId() {
@@ -101,6 +111,21 @@ public class Track implements Parcelable {
         return mArtistNameStr;
     }
 
+    public long getTrackDurationMs() {
+        return mDurationMs;
+    }
+
+    public String getTrackDurationStr() {
+        long durationSec = mDurationMs/MS_PER_SECOND;
+
+        long minutes = durationSec/SECONDS_PER_MINUTE;
+        long remainingSeconds = durationSec - (minutes*SECONDS_PER_MINUTE);
+
+        String durationStr = minutes + ":" + remainingSeconds;
+
+        return durationStr;
+    }
+
     @Override
     public String toString() {
         return mTrackNameStr;
@@ -119,6 +144,7 @@ public class Track implements Parcelable {
         dest.writeString(mAlbumImageUrlStr);
         dest.writeString(mPreviewUrlStr);
         dest.writeString(mArtistNameStr);
+        dest.writeLong(mDurationMs);
     }
 
     public static final Parcelable.Creator<Track> CREATOR

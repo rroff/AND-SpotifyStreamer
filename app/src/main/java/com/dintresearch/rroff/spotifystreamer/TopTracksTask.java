@@ -186,6 +186,7 @@ public class TopTracksTask extends AsyncTask<String, Void, Track[]> {
         final String TRACK_LABEL_NAME        = "name";
         final String TRACK_LABEL_ID          = "id";
         final String TRACK_LABEL_PREVIEW_URL = "preview_url";
+        final String TRACK_LABEL_DURATION    = "duration_ms";
         final String TRACK_LABEL_ALBUM       = "album";
         final String ALBUM_LABEL_NAME        = "name";
         final String ALBUM_LABEL_IMAGES      = "images";
@@ -203,6 +204,7 @@ public class TopTracksTask extends AsyncTask<String, Void, Track[]> {
             String name          = trackJson.getString(TRACK_LABEL_NAME);
             String id            = trackJson.getString(TRACK_LABEL_ID);
             String previewUrl    = trackJson.getString(TRACK_LABEL_PREVIEW_URL);
+            long duration        = trackJson.getLong(TRACK_LABEL_DURATION);
 
             JSONObject albumJson = trackJson.getJSONObject(TRACK_LABEL_ALBUM);
             String albumName     = albumJson.getString(ALBUM_LABEL_NAME);
@@ -218,9 +220,9 @@ public class TopTracksTask extends AsyncTask<String, Void, Track[]> {
             if (artistsArray.length() > 0) {
                 JSONObject artistJson = artistsArray.getJSONObject(0);
                 String artistName = artistJson.getString(ARTIST_LABEL_NAME);
-                tracks[ii] = new Track(name, id, albumName, imageUrl, previewUrl, artistName);
+                tracks[ii] = new Track(name, id, albumName, imageUrl, previewUrl, artistName, duration);
             } else {
-                tracks[ii] = new Track(name, id, albumName, imageUrl, previewUrl, "");
+                tracks[ii] = new Track(name, id, albumName, imageUrl, previewUrl, "", duration);
             }
         }
 
