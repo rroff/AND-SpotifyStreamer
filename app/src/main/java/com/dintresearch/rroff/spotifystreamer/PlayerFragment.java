@@ -7,21 +7,23 @@
  */
 package com.dintresearch.rroff.spotifystreamer;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.net.Uri;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dintresearch.rroff.spotifystreamer.service.PlayerService;
 import com.squareup.picasso.Picasso;
-
-import java.io.IOException;
 
 
 /**
@@ -39,7 +41,13 @@ public class PlayerFragment extends Fragment {
 
     private Track mTrack;
 
-    private MediaPlayer mPlayer;
+    private PlayerService mBoundService;
+    private boolean mServiceBound = false;
+
+    private int mDuration;
+
+    private Button mPlayPauseButton;
+    private TextView mDurationTV;
 
     public PlayerFragment() {
     }
@@ -56,8 +64,6 @@ public class PlayerFragment extends Fragment {
             Bundle bundle = intent.getBundleExtra(PlayerActivity.INSTANCE_BUNDLE);
             mTrack = bundle.getParcelable(Track.class.getName());
         }
-
-        mPlayer = new MediaPlayer();
 
         TextView artistNameTV = (TextView)rootView.findViewById(R.id.artist_name_textview);
         TextView albumNameTV  = (TextView)rootView.findViewById(R.id.album_name_textview);
@@ -95,29 +101,83 @@ public class PlayerFragment extends Fragment {
                     .into(albumIv);
         }
 
+        mDurationTV = (TextView)rootView.findViewById(R.id.track_duration_textview);
+        mPlayPauseButton = (Button)rootView.findViewById(R.id.play_pause_button);
+        mPlayPauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                togglePlayPause();
+            }
+        });
+
         return rootView;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if (mPlayer != null) {
-            Uri builtUri = Uri.parse(mTrack.getPreviewUrl());
-            try {
-                mPlayer.reset();
-                mPlayer.setDataSource(getActivity(), builtUri);
-                new PlayerTask(mPlayer).execute();
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error setting data source", e);
-            }
-        }
+
+        // Bind to service
+        Intent intent = new Intent(getActivity(), PlayerService.class);
+        getActivity().startService(intent);
+        getActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if ((mPlayer != null) && (mPlayer.isPlaying())) {
-            mPlayer.stop();
+        if (mServiceBound) {
+            getActivity().unbindService(mServiceConnection);
+            mServiceBound = false;
         }
     }
+
+    private void playTrack() {
+        if (mServiceBound) {
+            mDuration = mBoundService.play(mTrack.getPreviewUrl());
+            if (mDuration > 0) {
+                mPlayPauseButton.setText("PAUSE");
+            }
+            mDurationTV.setText(Integer.toString(mDuration));
+        } else {
+            Log.e(LOG_TAG, "Unable to play track - service not bound");
+        }
+    }
+
+    private void pauseTrack() {
+        if (mServiceBound) {
+            mBoundService.pause();
+            mPlayPauseButton.setText("PLAY");
+        } else {
+            Log.e(LOG_TAG, "Unable to pause track - service not bound");
+        }
+    }
+
+    private void togglePlayPause() {
+        if (mPlayPauseButton.getText().equals("PLAY")) {
+            playTrack();
+        } else {
+            pauseTrack();
+        }
+    }
+
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mServiceBound = false;
+            Log.d(LOG_TAG, "PlayerService disconnected");
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            PlayerService.PlayerBinder playerBinder = (PlayerService.PlayerBinder)service;
+            mBoundService = playerBinder.getService();
+            mServiceBound = true;
+            Log.d(LOG_TAG, "PlayerService connected");
+
+            // Start playback after bind has completed
+            playTrack();
+        }
+    };
 }

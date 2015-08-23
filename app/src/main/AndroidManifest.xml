@@ -38,6 +38,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.dintresearch.rroff.spotifystreamer.TopTracksActivity" />
         </activity>
+
+        <service android:name=".service.PlayerService"/>
     </application>
 
 </manifest>
