@@ -8,12 +8,14 @@
     android:orientation="horizontal"
     tools:context=".MainActivity">
 
-    <fragment
+    <FrameLayout
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/artists_container"
-        android:name="com.dintresearch.rroff.spotifystreamer.ArtistsFragment"
+        android:name=".ArtistsFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        tools:context=".ArtistsFragment"
         tools:layout="@android:layout/list_content" />
 
     <FrameLayout
