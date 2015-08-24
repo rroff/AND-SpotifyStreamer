@@ -15,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 public class PlayerDialog extends DialogFragment {
 
     /**
@@ -22,7 +24,8 @@ public class PlayerDialog extends DialogFragment {
      */
     private static final String LOG_TAG = PlayerDialog.class.getName();
 
-    private Track mTrack;
+    private ArrayList<Track> mTracks;
+    private int mPosition;
 
     private PlayerHelper mPlayerHelper;
 
@@ -36,10 +39,12 @@ public class PlayerDialog extends DialogFragment {
         // Track info is passed in via arguments
         Bundle arguments = getArguments();
         if (arguments != null) {
-            mTrack = arguments.getParcelable(Track.class.getName());
+            mTracks = arguments.getParcelableArrayList(PlayerHelper.TRACK_ARRAY);
+            mPosition = arguments.getInt(PlayerHelper.TRACK_POSITION);
         } else {
-            Log.e(LOG_TAG, "No track provided");
-            mTrack = null;
+            Log.e(LOG_TAG, "No tracks provided");
+            mTracks = null;
+            mPosition = 0;
         }
 
         setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_DeviceDefault_Dialog);
@@ -49,7 +54,7 @@ public class PlayerDialog extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_player, container);
-        mPlayerHelper = new PlayerHelper(view, getActivity(), mTrack);
+        mPlayerHelper = new PlayerHelper(view, getActivity(), mTracks, mPosition);
 
         return view;
     }

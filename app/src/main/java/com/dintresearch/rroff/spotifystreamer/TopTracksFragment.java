@@ -103,7 +103,9 @@ public class TopTracksFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Bundle args = new Bundle();
-                args.putParcelable(Track.class.getName(), mTopTracksAdapter.getItem(position));
+                args.putParcelableArrayList(PlayerHelper.TRACK_ARRAY,
+                                            mTopTracksAdapter.getTrackArrayList());
+                args.putInt(PlayerHelper.TRACK_POSITION, position);
 
                 if (mTwoPane) {
                     // Use Dialog for Player
@@ -156,7 +158,7 @@ public class TopTracksFragment extends Fragment {
         outState.putString(getString(R.string.pref_country_key),
                            mTopTracksAdapter.getCountryCode());
         outState.putParcelableArrayList(TopTrackAdapter.class.getName(),
-                mTopTracksAdapter.getArtistArrayList());
+                mTopTracksAdapter.getTrackArrayList());
     }
 
     /**

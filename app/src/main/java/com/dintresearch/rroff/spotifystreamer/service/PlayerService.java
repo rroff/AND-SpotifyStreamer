@@ -18,7 +18,8 @@ import android.util.Log;
 
 import java.io.IOException;
 
-public class PlayerService extends Service implements MediaPlayer.OnPreparedListener {
+public class PlayerService extends Service
+        implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
 
     private static final String LOG_TAG = PlayerService.class.getName();
 
@@ -30,10 +31,13 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
 
     private String mTrackPlaying;
 
+    private int mDurationInSeconds;
+
     @Override
     public void onCreate() {
         super.onCreate();
         mPlayer = new MediaPlayer();
+        mDurationInSeconds = 0;
     }
 
     @Nullable
@@ -58,10 +62,6 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
         stop();
     }
 
-    public void fastForward() {
-
-    }
-
     /**
      * Pauses track playback.
      */
@@ -75,10 +75,8 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
      * Plays a specified audio track, or resumes playback if paused.
      *
      * @param trackUrl URL of track to play
-     * @return Duration of track, in seconds
      */
-    public int play(String trackUrl) {
-        int duration = 0;
+    public void play(String trackUrl) {
         if (mPlayer != null) {
 
             // If track is different, play
@@ -93,8 +91,6 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
                 mPlayer.prepareAsync();
                 mPlayer.setOnPreparedListener(this);
 
-                // TODO: Duration returning 0, maybe add callback for setting duration?
-                // duration = mPlayer.getDuration()/MS_PER_SECOND;
                 mTrackPlaying = trackUrl;
             } else {
 
@@ -108,15 +104,21 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
                         mPlayer.start();
                     }
                 }
-                duration = mPlayer.getDuration()/MS_PER_SECOND;
             }
         }
-
-        return duration;
     }
 
-    public void rewind() {
+    public int getDurationInSeconds() {
+        return mDurationInSeconds;
+    }
 
+    public int getPlayPositonInSeconds() {
+        int position = 0;
+        if (mPlayer != null) {
+            position = mPlayer.getCurrentPosition()/MS_PER_SECOND;
+        }
+
+        return position;
     }
 
     /**
@@ -146,10 +148,16 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
+        mDurationInSeconds = mp.getDuration()/MS_PER_SECOND;
+        mp.setOnCompletionListener(this);
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        Log.d(LOG_TAG, "Playback complete");
     }
 
     public class PlayerBinder extends Binder {
-
         public PlayerService getService() {
             return PlayerService.this;
         }

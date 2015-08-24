@@ -108,7 +108,7 @@ public class TopTrackAdapter extends ArrayAdapter<Track> {
      *
      * @return ArrayList of top track data
      */
-    public ArrayList<Track> getArtistArrayList() {
+    public ArrayList<Track> getTrackArrayList() {
         ArrayList<Track> tracks = new ArrayList<>();
         for (int ii=0; ii<getCount(); ++ii) {
             tracks.add(getItem(ii));

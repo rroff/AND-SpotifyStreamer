@@ -15,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 
 /**
  * A placeholder fragment containing a simple view.
@@ -37,18 +39,21 @@ public class PlayerFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_player, container, false);
 
         // Artist info is passed in via Intent
-        Track track;
+        ArrayList<Track> tracks;
+        int position;
         Intent intent = getActivity().getIntent();
         if (  (intent != null)
            && intent.hasExtra(PlayerActivity.INSTANCE_BUNDLE)) {
             Bundle bundle = intent.getBundleExtra(PlayerActivity.INSTANCE_BUNDLE);
-            track = bundle.getParcelable(Track.class.getName());
+            tracks = bundle.getParcelableArrayList(PlayerHelper.TRACK_ARRAY);
+            position = bundle.getInt(PlayerHelper.TRACK_POSITION);
         } else {
             Log.e(LOG_TAG, "No track provided");
-            track = null;
+            tracks = null;
+            position = 0;
         }
 
-        mPlayerHelper = new PlayerHelper(rootView, getActivity(), track);
+        mPlayerHelper = new PlayerHelper(rootView, getActivity(), tracks, position);
 
         return rootView;
     }
