@@ -47,7 +47,23 @@
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="PlayerButtonStyle">
+    <style name="PlayerSeekbarStyle">
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:max">30</item>
+    </style>
+
+    <style name="PlayerSeekbarInlineStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:max">30</item>
+    </style>
+
+    <style name="PlayerButtonHorizontalStyle">
         <item name="android:background">@color/buttonBackground</item>
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:layout_marginRight">20dp</item>
@@ -55,8 +71,12 @@
         <item name="android:layout_height">80dp</item>
     </style>
 
-
-
-
+    <style name="PlayerButtonVerticalStyle">
+        <item name="android:background">@color/buttonBackground</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:layout_marginBottom">20dp</item>
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">60dp</item>
+    </style>
 
 </resources>

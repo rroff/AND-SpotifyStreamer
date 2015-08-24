@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:background="@color/appBackground"
+    tools:context=".PlayerFragment">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="4"
+        android:orientation="vertical"
+        android:background="@color/appBackground"
+        tools:context=".PlayerFragment">
+
+        <TextView
+            style="@style/PlayerArtistTextStyle"
+            android:layout_marginTop="20dp"
+            android:text="Artist"
+            android:id="@+id/artist_name_textview" />
+
+        <TextView
+            style="@style/PlayerAlbumTextStyle"
+            android:text="Album"
+            android:id="@+id/album_name_textview" />
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="10dp"
+            android:id="@+id/track_image" />
+
+        <TextView
+            style="@style/PlayerTrackTextStyle"
+            android:text="Track"
+            android:id="@+id/track_name_textview" />
+
+        <LinearLayout
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="0:00" />
+
+            <SeekBar
+                style="@style/PlayerSeekbarInlineStyle"
+                android:layout_weight="12"
+                android:id="@+id/track_seekbar" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:text="0:00"
+                android:id="@+id/track_duration_textview" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="10dp">
+
+        <ImageButton
+            style="@style/PlayerButtonVerticalStyle"
+            android:src="@drawable/audio_start"
+            android:id="@+id/prev_track_button" />
+
+        <ImageButton
+            style="@style/PlayerButtonVerticalStyle"
+            android:src="@drawable/audio_play"
+            android:id="@+id/play_pause_button" />
+
+        <ImageButton
+            style="@style/PlayerButtonVerticalStyle"
+            android:src="@drawable/audio_end"
+            android:id="@+id/next_track_button" />
+
+    </LinearLayout>
+</LinearLayout>

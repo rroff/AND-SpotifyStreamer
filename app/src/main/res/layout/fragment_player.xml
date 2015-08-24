@@ -32,12 +32,7 @@
         android:id="@+id/track_name_textview" />
 
     <SeekBar
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:max="30"
+        style="@style/PlayerTrackTextStyle"
         android:id="@+id/track_seekbar" />
 
     <LinearLayout
@@ -74,17 +69,17 @@
         android:layout_marginBottom="20dp">
 
         <ImageButton
-            style="@style/PlayerButtonStyle"
+            style="@style/PlayerButtonHorizontalStyle"
             android:src="@drawable/audio_start"
             android:id="@+id/prev_track_button" />
 
         <ImageButton
-            style="@style/PlayerButtonStyle"
+            style="@style/PlayerButtonHorizontalStyle"
             android:src="@drawable/audio_play"
             android:id="@+id/play_pause_button" />
 
         <ImageButton
-            style="@style/PlayerButtonStyle"
+            style="@style/PlayerButtonHorizontalStyle"
             android:src="@drawable/audio_end"
             android:id="@+id/next_track_button" />
 
