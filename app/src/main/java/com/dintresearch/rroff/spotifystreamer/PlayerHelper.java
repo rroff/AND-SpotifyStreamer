@@ -97,6 +97,10 @@ public class PlayerHelper {
      */
     private ImageButton mPlayPauseButton;
 
+    private ImageButton mPrevTrackButton;
+
+    private ImageButton mNextTrackButton;
+
     /**
      * Constructor.
      *
@@ -123,16 +127,16 @@ public class PlayerHelper {
             }
         });
 
-        ImageButton prevTrackButton = (ImageButton)mView.findViewById(R.id.prev_track_button);
-        prevTrackButton.setOnClickListener(new View.OnClickListener() {
+        mPrevTrackButton = (ImageButton)mView.findViewById(R.id.prev_track_button);
+        mPrevTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 changeTrack(-1);
             }
         });
 
-        ImageButton nextTrackButton = (ImageButton)mView.findViewById(R.id.next_track_button);
-        nextTrackButton.setOnClickListener(new View.OnClickListener() {
+        mNextTrackButton = (ImageButton)mView.findViewById(R.id.next_track_button);
+        mNextTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 changeTrack(1);
@@ -208,6 +212,14 @@ public class PlayerHelper {
     }
 
     /**
+     * Retrieves current track number being played from playlist.
+     * @return Position in playlist
+     */
+    public int getPlaylistPosition() {
+        return mPlaylistPosition;
+    }
+
+    /**
      * Starts player service (if needed) and creates binding.
      */
     public void start() {
@@ -234,7 +246,6 @@ public class PlayerHelper {
         if (mServiceBound) {
             if ((mTrackPlaylist != null) && (mPlaylistPosition < mTrackPlaylist.size())) {
                 mBoundService.play(mTrackPlaylist.get(mPlaylistPosition).getPreviewUrl());
-                mPlayPauseButton.setImageResource(R.drawable.audio_pause);
             } else {
                 Log.e(LOG_TAG, "Unable to play track - no track specified");
             }
@@ -249,7 +260,6 @@ public class PlayerHelper {
     private void pauseTrack() {
         if (mServiceBound) {
             mBoundService.pause();
-            mPlayPauseButton.setImageResource(R.drawable.audio_play);
         } else {
             Log.e(LOG_TAG, "Unable to pause track - service not bound");
         }
@@ -284,6 +294,13 @@ public class PlayerHelper {
         // Update Seek (Progress) Bar
         mTrackSB.setMax(event.getTrackDurationSeconds());
         mTrackSB.setProgress(event.getPlayPositionSeconds());
+
+        // Update PlayPause Button State
+        if (event.isPlaying()) {
+            mPlayPauseButton.setImageResource(R.drawable.audio_pause);
+        } else {
+            mPlayPauseButton.setImageResource(R.drawable.audio_play);
+        }
     }
 
     /**
@@ -318,10 +335,14 @@ public class PlayerHelper {
     private class StatusEvent {
         private int mTrackDurationSeconds;
         private int mPlayPositionSeconds;
+        private boolean mIsPlaying;
 
-        public StatusEvent(int trackDurationSeconds, int playPositionSeconds) {
+        public StatusEvent(int trackDurationSeconds,
+                           int playPositionSeconds,
+                           boolean isPlaying) {
             mTrackDurationSeconds = trackDurationSeconds;
             mPlayPositionSeconds = playPositionSeconds;
+            mIsPlaying = isPlaying;
         }
 
         public int getTrackDurationSeconds() {
@@ -330,6 +351,10 @@ public class PlayerHelper {
 
         public int getPlayPositionSeconds() {
             return mPlayPositionSeconds;
+        }
+
+        public boolean isPlaying() {
+            return mIsPlaying;
         }
     }
 
@@ -359,7 +384,8 @@ public class PlayerHelper {
             while (!exitFlag && mServiceBound) {
                 StatusEvent event = new StatusEvent(
                         mBoundService.getDurationInSeconds(),
-                        mBoundService.getPlayPositonInSeconds());
+                        mBoundService.getPlayPositonInSeconds(),
+                        mBoundService.isPlaying());
                 EventBus.getDefault().post(event);
 
                 try {

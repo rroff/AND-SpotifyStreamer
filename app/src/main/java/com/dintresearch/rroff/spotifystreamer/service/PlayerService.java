@@ -33,6 +33,9 @@ public class PlayerService extends Service
 
     private int mDurationInSeconds;
 
+    private boolean mIsPaused = false;
+    private boolean mIsStopped = false;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -68,6 +71,7 @@ public class PlayerService extends Service
     public void pause() {
         if ((mPlayer != null) && (mPlayer.isPlaying())) {
             mPlayer.pause();
+            mIsPaused = true;
         }
     }
 
@@ -78,6 +82,9 @@ public class PlayerService extends Service
      */
     public void play(String trackUrl) {
         if (mPlayer != null) {
+
+            mIsPaused = false;
+            mIsStopped = false;
 
             // If track is different, play
             if (!trackUrl.equals(mTrackPlaying)) {
@@ -127,6 +134,8 @@ public class PlayerService extends Service
     public void stop() {
         if (mPlayer != null) {
             mPlayer.stop();
+            mIsPaused = false;
+            mIsStopped = true;
         }
     }
 
@@ -138,6 +147,26 @@ public class PlayerService extends Service
         }
 
         return playFlag;
+    }
+
+    public boolean isPaused() {
+        boolean pauseFlag = false;
+
+        if (!isPlaying()) {
+            pauseFlag = mIsPaused;
+        }
+
+        return pauseFlag;
+    }
+
+    public boolean isStopped() {
+        boolean stoppedFlag = false;
+
+        if (!isPlaying()) {
+            stoppedFlag = mIsStopped;
+        }
+
+        return stoppedFlag;
     }
 
     /**
@@ -154,7 +183,8 @@ public class PlayerService extends Service
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        Log.d(LOG_TAG, "Playback complete");
+        mIsPaused = false;
+        mIsStopped = true;
     }
 
     public class PlayerBinder extends Binder {

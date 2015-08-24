@@ -47,6 +47,13 @@ public class PlayerDialog extends DialogFragment {
             mPosition = 0;
         }
 
+        // Restore track position when rotation occurs
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(PlayerHelper.TRACK_POSITION)) {
+                mPosition = savedInstanceState.getInt(PlayerHelper.TRACK_POSITION);
+            }
+        }
+
         setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_DeviceDefault_Dialog);
     }
 
@@ -69,5 +76,15 @@ public class PlayerDialog extends DialogFragment {
     public void onPause() {
         super.onPause();
         mPlayerHelper.unbindService();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // Provide current track position
+        if (mPlayerHelper != null) {
+            outState.putInt(PlayerHelper.TRACK_POSITION, mPlayerHelper.getPlaylistPosition());
+        }
     }
 }

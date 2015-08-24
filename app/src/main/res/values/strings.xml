@@ -12,6 +12,4 @@
     <string name="msg_no_tracks_found">No Top Tracks Found</string>
     <string name="msg_less_than_ten_tracks_found">Less than 10 Top Tracks Found</string>
 
-    <string name="hello_world">Hello world!</string>
-
 </resources>
