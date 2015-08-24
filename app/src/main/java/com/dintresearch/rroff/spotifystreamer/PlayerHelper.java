@@ -321,8 +321,10 @@ public class PlayerHelper {
             mServiceBound = true;
             Log.d(LOG_TAG, "PlayerService connected");
 
-            // Start playback after bind has completed
-            playTrack();
+            // Start playback after bind has completed if not paused or stopped
+            if (!mBoundService.isPaused() && !mBoundService.isStopped()) {
+                playTrack();
+            }
 
             // Start statusing thread
             new PlayerStatusTask().execute();
