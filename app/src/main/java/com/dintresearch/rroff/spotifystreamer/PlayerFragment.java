@@ -53,6 +53,13 @@ public class PlayerFragment extends Fragment {
             position = 0;
         }
 
+        // Restore track position when rotation occurs
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(PlayerHelper.TRACK_POSITION)) {
+                position = savedInstanceState.getInt(PlayerHelper.TRACK_POSITION);
+            }
+        }
+
         mPlayerHelper = new PlayerHelper(rootView, getActivity(), tracks, position);
 
         return rootView;
@@ -71,7 +78,13 @@ public class PlayerFragment extends Fragment {
         mPlayerHelper.unbindService();
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
-
-
+        // Provide current track position
+        if (mPlayerHelper != null) {
+            outState.putInt(PlayerHelper.TRACK_POSITION, mPlayerHelper.getPlaylistPosition());
+        }
+    }
 }
