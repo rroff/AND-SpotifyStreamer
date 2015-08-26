@@ -57,8 +57,23 @@
 
             <SeekBar
                 style="@style/PlayerSeekbarInlineStyle"
-                android:layout_weight="12"
+                android:layout_weight="10"
                 android:id="@+id/track_seekbar" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="0:00"
+                android:id="@+id/track_elapsed_textview" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="/" />
 
             <TextView
                 android:layout_width="0dp"

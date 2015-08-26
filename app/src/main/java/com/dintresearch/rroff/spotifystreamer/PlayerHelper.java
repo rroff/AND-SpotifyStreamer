@@ -88,6 +88,11 @@ public class PlayerHelper {
     private TextView mDurationTV;
 
     /**
+     * Elapsed Playtime UI element.
+     */
+    private TextView mElapsedTV;
+
+    /**
      * Playback progress UI element.
      */
     private SeekBar mTrackSB;
@@ -117,6 +122,7 @@ public class PlayerHelper {
         mPlaylistPosition = playlistPosition;
 
         mDurationTV = (TextView)mView.findViewById(R.id.track_duration_textview);
+        mElapsedTV = (TextView)mView.findViewById(R.id.track_elapsed_textview);
         mTrackSB = (SeekBar)mView.findViewById(R.id.track_seekbar);
 
         mPlayPauseButton = (ImageButton)mView.findViewById(R.id.play_pause_button);
@@ -193,6 +199,7 @@ public class PlayerHelper {
                     .into(albumIv);
         }
 
+        mElapsedTV.setText("0:00");
         mDurationTV.setText("0:00");
         mTrackSB.setProgress(0);
     }
@@ -285,11 +292,9 @@ public class PlayerHelper {
      */
     public void onEventMainThread(StatusEvent event) {
 
-        // Update Duration Text
-        int minutes = event.getTrackDurationSeconds()/SECONDS_PER_MINUTE;
-        int remainingSeconds = event.getTrackDurationSeconds() - (minutes*SECONDS_PER_MINUTE);
-        String durationStr = String.format("%d:%02d", minutes, remainingSeconds);
-        mDurationTV.setText(durationStr);
+        // Update Duration & Elapsed Time Text
+        mDurationTV.setText(toMinutesSecondsString(event.getTrackDurationSeconds()));
+        mElapsedTV.setText(toMinutesSecondsString(event.getPlayPositionSeconds()));
 
         // Update Seek (Progress) Bar
         mTrackSB.setMax(event.getTrackDurationSeconds());
@@ -301,6 +306,20 @@ public class PlayerHelper {
         } else {
             mPlayPauseButton.setImageResource(R.drawable.audio_play);
         }
+    }
+
+    /**
+     * Converts seconds to a minutes-seconds string.
+     *
+     * @param seconds Number of seconds
+     *
+     * @return Minutes-seconds string, represented with a colon delimeter.
+     */
+    private String toMinutesSecondsString(int seconds) {
+        int minutes = seconds/SECONDS_PER_MINUTE;
+        int remainingSeconds = seconds - (minutes*SECONDS_PER_MINUTE);
+
+        return String.format("%d:%02d", minutes, remainingSeconds);
     }
 
     /**
