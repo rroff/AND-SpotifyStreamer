@@ -115,6 +115,12 @@ public class PlayerService extends Service
         }
     }
 
+    public void seek(int seconds) {
+        if (isPlaying() || isPaused()) {
+            mPlayer.seekTo(seconds * MS_PER_SECOND);
+        }
+    }
+
     public int getDurationInSeconds() {
         return mDurationInSeconds;
     }

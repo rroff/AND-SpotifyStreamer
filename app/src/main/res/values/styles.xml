@@ -79,4 +79,9 @@
         <item name="android:layout_height">60dp</item>
     </style>
 
+    <style name="PlayerTimeStyle" parent="BaseTextStyle">
+        <item name="android:textColor">@color/darkGrey</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
 </resources>

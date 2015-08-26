@@ -97,6 +97,8 @@ public class PlayerHelper {
      */
     private SeekBar mTrackSB;
 
+    private boolean mSeekBarTouchInProgress;
+
     /**
      * State-changing button:  Play/Pause
      */
@@ -123,7 +125,30 @@ public class PlayerHelper {
 
         mDurationTV = (TextView)mView.findViewById(R.id.track_duration_textview);
         mElapsedTV = (TextView)mView.findViewById(R.id.track_elapsed_textview);
+
         mTrackSB = (SeekBar)mView.findViewById(R.id.track_seekbar);
+        mTrackSB.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // NOTE: SeekBar is represented in seconds
+                mElapsedTV.setText(toMinutesSecondsString(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                mSeekBarTouchInProgress = true;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (mServiceBound) {
+                    // NOTE: SeekBar is represented in seconds
+                    mBoundService.seek(seekBar.getProgress());
+                }
+                mSeekBarTouchInProgress = false;
+            }
+        });
+        mSeekBarTouchInProgress = false;
 
         mPlayPauseButton = (ImageButton)mView.findViewById(R.id.play_pause_button);
         mPlayPauseButton.setOnClickListener(new View.OnClickListener() {
@@ -294,7 +319,6 @@ public class PlayerHelper {
 
         // Update Duration & Elapsed Time Text
         mDurationTV.setText(toMinutesSecondsString(event.getTrackDurationSeconds()));
-        mElapsedTV.setText(toMinutesSecondsString(event.getPlayPositionSeconds()));
 
         // Update Seek (Progress) Bar
         mTrackSB.setMax(event.getTrackDurationSeconds());
