@@ -60,7 +60,7 @@ public class PlayerDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_player, container);
+        View view = inflater.inflate(R.layout.fragment_player, container, false);
         mPlayerHelper = new PlayerHelper(view, getActivity(), mTracks, mPosition);
 
         return view;

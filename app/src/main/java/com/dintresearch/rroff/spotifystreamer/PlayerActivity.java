@@ -23,8 +23,17 @@ public class PlayerActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
         if (savedInstanceState == null) {
+            PlayerDialog playerFragment = new PlayerDialog();
+
+            // Move intent extra to fragment argument
+            Intent intent = getIntent();
+            if (  (intent != null)
+               && intent.hasExtra(PlayerActivity.INSTANCE_BUNDLE)) {
+                playerFragment.setArguments(intent.getBundleExtra(PlayerActivity.INSTANCE_BUNDLE));
+            }
+
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.player_container, new PlayerFragment())
+                    .add(R.id.player_container, playerFragment)
                     .commit();
         }
     }
