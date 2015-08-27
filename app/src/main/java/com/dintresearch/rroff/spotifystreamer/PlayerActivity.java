@@ -23,7 +23,7 @@ public class PlayerActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
         if (savedInstanceState == null) {
-            PlayerDialog playerFragment = new PlayerDialog();
+            PlayerDialogFragment playerFragment = new PlayerDialogFragment();
 
             // Move intent extra to fragment argument
             Intent intent = getIntent();

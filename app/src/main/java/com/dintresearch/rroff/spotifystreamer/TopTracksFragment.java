@@ -103,14 +103,14 @@ public class TopTracksFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Bundle args = new Bundle();
-                args.putParcelableArrayList(PlayerHelper.TRACK_ARRAY,
+                args.putParcelableArrayList(PlayerDialogFragment.TRACK_ARRAY_KEY,
                                             mTopTracksAdapter.getTrackArrayList());
-                args.putInt(PlayerHelper.TRACK_POSITION, position);
+                args.putInt(PlayerDialogFragment.TRACK_POSITION_KEY, position);
 
                 if (mTwoPane) {
                     // Use Dialog for Player
                     FragmentManager fm = getActivity().getSupportFragmentManager();
-                    PlayerDialog playerDialog = new PlayerDialog();
+                    PlayerDialogFragment playerDialog = new PlayerDialogFragment();
                     playerDialog.setArguments(args);
                     playerDialog.show(fm, "fragment_player");
                 } else {
