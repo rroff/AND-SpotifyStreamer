@@ -7,11 +7,12 @@
  */
 package com.dintresearch.rroff.spotifystreamer;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -26,11 +27,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.dintresearch.rroff.spotifystreamer.service.PlayerService;
+import com.dintresearch.rroff.spotifystreamer.service.PlayerStatus;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-
-import de.greenrobot.event.EventBus;
 
 public class PlayerDialogFragment extends DialogFragment {
 
@@ -75,11 +75,6 @@ public class PlayerDialogFragment extends DialogFragment {
     private static final int IMAGE_WIDTH = 400;
 
     /**
-     * Wait time between polls during playback service statusing.
-     */
-    private static final int STATUS_POLL_WAIT_MS = 250;
-
-    /**
      * Track playlist.
      */
     private ArrayList<Track> mTrackPlaylist;
@@ -90,11 +85,6 @@ public class PlayerDialogFragment extends DialogFragment {
     private int mPlaylistPosition;
 
     /**
-     * Inter-Thread Communication (ITC) used to pass data from play status thread to main UI thread.
-     */
-    private EventBus mEventBus = EventBus.getDefault();
-
-    /**
      * PlayerService binding.
      */
     private PlayerService mBoundService;
@@ -103,6 +93,8 @@ public class PlayerDialogFragment extends DialogFragment {
      * PlayerService binding flag.
      */
     private boolean mServiceBound = false;
+
+    private StatusReceiver mStatusReceiver;
 
     /**
      * Artist Name UI element.
@@ -262,7 +254,6 @@ public class PlayerDialogFragment extends DialogFragment {
         });
 
         mSeekBarTouchInProgress = false;
-        mEventBus.register(this);
         updatePlayerUi();
 
         return view;
@@ -273,14 +264,7 @@ public class PlayerDialogFragment extends DialogFragment {
      */
     @Override
     public void onStart() {
-        Context context = getActivity();
-
         super.onStart();
-
-        // Bind to service
-        Intent intent = new Intent(context, PlayerService.class);
-        context.startService(intent);
-        context.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     /**
@@ -289,7 +273,32 @@ public class PlayerDialogFragment extends DialogFragment {
     @Override
     public void onPause() {
         super.onPause();
+
+        // Unregister receiver
+        getActivity().unregisterReceiver(mStatusReceiver);
+        Log.d(LOG_TAG, "StatusReceiver unregistered");
+
+        // Unbind service
         unbindService();
+    }
+
+    /**
+     * Runs when DialogFragment is resumed.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Register status receiver
+        IntentFilter filter = new IntentFilter(PlayerService.STATUS_INTENT_FILTER_TAG);
+        mStatusReceiver = new StatusReceiver();
+        getActivity().registerReceiver(mStatusReceiver, filter);
+        Log.d(LOG_TAG, "StatusReceiver registered");
+
+        // Bind to service
+        Intent intent = new Intent(getActivity(), PlayerService.class);
+        getActivity().startService(intent);
+        getActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     /**
@@ -303,28 +312,6 @@ public class PlayerDialogFragment extends DialogFragment {
 
         // Provide current track position
         outState.putInt(TRACK_POSITION_KEY, mPlaylistPosition);
-    }
-
-    /**
-     * Handler for receiving messages from status thread.
-     *
-     * @param event Status message
-     */
-    public void onEventMainThread(StatusEvent event) {
-
-        // Update Duration & Elapsed Time Text
-        mDurationTV.setText(toMinutesSecondsString(event.getTrackDurationSeconds()));
-
-        // Update Seek (Progress) Bar
-        mTrackSB.setMax(event.getTrackDurationSeconds());
-        mTrackSB.setProgress(event.getPlayPositionSeconds());
-
-        // Update PlayPause Button State
-        if (event.isPlaying()) {
-            mPlayPauseButton.setImageResource(R.drawable.audio_pause);
-        } else {
-            mPlayPauseButton.setImageResource(R.drawable.audio_play);
-        }
     }
 
     /**
@@ -457,93 +444,51 @@ public class PlayerDialogFragment extends DialogFragment {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             mServiceBound = false;
-            Log.d(LOG_TAG, "PlayerService disconnected");
+            Log.d(LOG_TAG, "Disconnected (" + name.getClassName() + ")");
         }
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            // Save server binding
             PlayerService.PlayerBinder playerBinder = (PlayerService.PlayerBinder)service;
             mBoundService = playerBinder.getService();
             mServiceBound = true;
-            Log.d(LOG_TAG, "PlayerService connected");
+            Log.d(LOG_TAG, "Connected (" + name.getClassName() + ")");
 
             // Start playback after bind has completed if not paused or stopped
             if (!mBoundService.isPaused() && !mBoundService.isStopped()) {
                 playTrack();
             }
-
-            // Start statusing thread
-            new PlayerStatusTask().execute();
         }
     };
 
     /**
-     * Container class holding data being passed back from status thread.
+     * BroadcastReceiver class for processing status messages from the PlayerService.
      */
-    private class StatusEvent {
-        private int mTrackDurationSeconds;
-        private int mPlayPositionSeconds;
-        private boolean mIsPlaying;
+    private class StatusReceiver extends BroadcastReceiver {
 
-        public StatusEvent(int trackDurationSeconds,
-                           int playPositionSeconds,
-                           boolean isPlaying) {
-            mTrackDurationSeconds = trackDurationSeconds;
-            mPlayPositionSeconds = playPositionSeconds;
-            mIsPlaying = isPlaying;
+        public StatusReceiver() {
         }
 
-        public int getTrackDurationSeconds() {
-            return mTrackDurationSeconds;
-        }
-
-        public int getPlayPositionSeconds() {
-            return mPlayPositionSeconds;
-        }
-
-        public boolean isPlaying() {
-            return mIsPlaying;
-        }
-    }
-
-    /**
-     * Thread that manages gathering and providing playback status.
-     */
-    private class PlayerStatusTask extends AsyncTask<Void, Void, Void> {
-
-        /**
-         * Default constructor.
-         */
-        public PlayerStatusTask() {
-        }
-
-        /**
-         * Statusing thread.
-         *
-         * @param params Not used
-         * @return Always null
-         */
         @Override
-        protected Void doInBackground(Void... params) {
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra(PlayerStatus.class.getName())) {
+                PlayerStatus status = intent.getParcelableExtra(PlayerStatus.class.getName());
 
-            boolean exitFlag = false;
+                // Update Duration & Elapsed Time Text
+                mDurationTV.setText(toMinutesSecondsString(status.getTrackDurationSeconds()));
 
-            // Thread runs as long as service is bound to the player
-            while (!exitFlag && mServiceBound) {
-                StatusEvent event = new StatusEvent(
-                        mBoundService.getDurationInSeconds(),
-                        mBoundService.getPlayPositonInSeconds(),
-                        mBoundService.isPlaying());
-                EventBus.getDefault().post(event);
+                // Update Seek (Progress) Bar
+                mTrackSB.setMax(status.getTrackDurationSeconds());
+                mTrackSB.setProgress(status.getPlayPositionSeconds());
 
-                try {
-                    Thread.sleep(STATUS_POLL_WAIT_MS);
-                } catch (InterruptedException e) {
-                    exitFlag = true;
+                // Update PlayPause Button State
+                if (status.isPlaying()) {
+                    mPlayPauseButton.setImageResource(R.drawable.audio_pause);
+                } else {
+                    mPlayPauseButton.setImageResource(R.drawable.audio_play);
                 }
             }
-
-            return null;
         }
     }
 }

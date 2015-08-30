@@ -23,6 +23,8 @@ public class PlayerService extends Service
 
     private static final String LOG_TAG = PlayerService.class.getName();
 
+    public static final String STATUS_INTENT_FILTER_TAG = PlayerStatus.class.getCanonicalName();
+
     private static final int MS_PER_SECOND = 1000;
 
     private IBinder mBinder = new PlayerBinder();
@@ -36,11 +38,17 @@ public class PlayerService extends Service
     private boolean mIsPaused = false;
     private boolean mIsStopped = false;
 
+    private PlayerStatusTask mStatusThread;
+
     @Override
     public void onCreate() {
         super.onCreate();
         mPlayer = new MediaPlayer();
         mDurationInSeconds = 0;
+
+        // Start statusing thread
+        mStatusThread = new PlayerStatusTask(this);
+        mStatusThread.execute();
     }
 
     @Nullable
@@ -61,8 +69,11 @@ public class PlayerService extends Service
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        if (mStatusThread != null) {
+            mStatusThread.stopStatusing();
+        }
         stop();
+        super.onDestroy();
     }
 
     /**
