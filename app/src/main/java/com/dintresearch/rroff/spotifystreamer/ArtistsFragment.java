@@ -9,6 +9,7 @@ package com.dintresearch.rroff.spotifystreamer;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
@@ -154,7 +155,7 @@ public class ArtistsFragment extends Fragment {
      */
     private void searchForArtists() {
         String artistSearchStr = mArtistSearchTxt.getText().toString();
-        new SearchArtistsTask(mArtistAdapter).execute(artistSearchStr);
+        new SearchArtistsTask(mArtistAdapter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, artistSearchStr);
     }
 
     /**

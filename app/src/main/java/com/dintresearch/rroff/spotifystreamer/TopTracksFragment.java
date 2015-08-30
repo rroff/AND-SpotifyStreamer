@@ -8,6 +8,7 @@
 package com.dintresearch.rroff.spotifystreamer;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -176,7 +177,8 @@ public class TopTracksFragment extends Fragment {
      */
     private void updateTopTracks(String countryCode) {
         if (mArtist != null) {
-            new TopTracksTask(mTopTracksAdapter).execute(mArtist.getId(), countryCode);
+            new TopTracksTask(mTopTracksAdapter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                                                    mArtist.getId(), countryCode);
         }
     }
 }
