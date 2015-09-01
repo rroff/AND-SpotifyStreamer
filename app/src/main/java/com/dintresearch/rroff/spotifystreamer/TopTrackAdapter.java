@@ -17,7 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 
@@ -77,16 +78,17 @@ public class TopTrackAdapter extends ArrayAdapter<Track> {
             String imageUrl = getItem(position).getAlbumImageUrl();
             ImageView albumIv = (ImageView)v.findViewById(R.id.list_item_track_image);
             if ((imageUrl != null) && (imageUrl.length() > 0)) {
-                Picasso.with(mContext)
+                Glide.with(mContext)
                         .load(imageUrl)
-                        .resize(IMAGE_WIDTH, IMAGE_HEIGHT)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .override(IMAGE_WIDTH, IMAGE_HEIGHT)
                         .centerCrop()
                         .into(albumIv);
             } else {
                 // Image not found
-                Picasso.with(mContext)
+                Glide.with(mContext)
                         .load(R.drawable.no_image_available)
-                        .resize(IMAGE_WIDTH, IMAGE_HEIGHT)
+                        .override(IMAGE_WIDTH, IMAGE_HEIGHT)
                         .centerCrop()
                         .into(albumIv);
             }

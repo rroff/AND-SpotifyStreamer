@@ -26,9 +26,10 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.dintresearch.rroff.spotifystreamer.service.PlayerService;
 import com.dintresearch.rroff.spotifystreamer.service.PlayerStatus;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -406,16 +407,17 @@ public class PlayerDialogFragment extends DialogFragment {
 
             String imageUrl = track.getAlbumImageUrl();
             if ((imageUrl != null) && (imageUrl.length() > 0)) {
-                Picasso.with(context)
+                Glide.with(context)
                         .load(imageUrl)
-                        .resize(IMAGE_WIDTH, IMAGE_HEIGHT)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .override(IMAGE_WIDTH, IMAGE_HEIGHT)
                         .centerCrop()
                         .into(mAlbumIv);
             } else {
                 // Image not found
-                Picasso.with(context)
+                Glide.with(context)
                         .load(R.drawable.no_image_available)
-                        .resize(IMAGE_WIDTH, IMAGE_HEIGHT)
+                        .override(IMAGE_WIDTH, IMAGE_HEIGHT)
                         .centerCrop()
                         .into(mAlbumIv);
             }
@@ -424,9 +426,9 @@ public class PlayerDialogFragment extends DialogFragment {
             mAlbumNameTV.setText(UNKNOWN_STR);
             mTrackNameTV.setText(UNKNOWN_STR);
 
-            Picasso.with(context)
+            Glide.with(context)
                     .load(R.drawable.no_image_available)
-                    .resize(IMAGE_WIDTH, IMAGE_HEIGHT)
+                    .override(IMAGE_WIDTH, IMAGE_HEIGHT)
                     .centerCrop()
                     .into(mAlbumIv);
         }

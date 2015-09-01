@@ -16,7 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 
@@ -68,16 +69,17 @@ public class ArtistAdapter extends ArrayAdapter<Artist> {
             String imageUrl = getItem(position).getImageUrl();
             ImageView artistIv = (ImageView)v.findViewById(R.id.list_item_artists_image);
             if ((imageUrl != null) && (imageUrl.length() > 0)) {
-                Picasso.with(mContext)
+                Glide.with(mContext)
                         .load(imageUrl)
-                        .resize(200,200)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .override(200, 200)
                         .centerCrop()
                         .into(artistIv);
             } else {
                 // Image not found
-                Picasso.with(mContext)
+                Glide.with(mContext)
                         .load(R.drawable.no_image_available)
-                        .resize(200,200)
+                        .override(200, 200)
                         .centerCrop()
                         .into(artistIv);
             }
